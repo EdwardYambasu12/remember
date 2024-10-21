@@ -7,7 +7,7 @@ const news = require("./news.js")
 const search = require("./search.js")
 const app = express()
 const axios = require("axios")
-//const reloader = require("./reload.js")
+const reloader = require("./reload.js")
 const matches = require("./get_matches.js")
 const result = require("./result.js")
 const league = require("./inner_league.js")
@@ -39,9 +39,13 @@ app.use(result)
 app.use(team)
 app.use(player)
 
+function relay(){
 
+		console.log("praise the Lord")
+	setTimeout(relay, 30000)
+}
 
-
+relay()
 
 app.listen(5000, ()=>{
 	console.log("server is loading on port 5000")

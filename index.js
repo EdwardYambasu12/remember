@@ -44,6 +44,36 @@ function relay(){
 	setTimeout(relay, 30000)
 }
 
+const http = require('http'); // Or use axios for more flexibility
+// const axios = require('axios');
+
+const keepAlive = () => {
+  const url = 'https://remember-0j3b.onrender.com'; // Replace with your server's actual URL
+  
+  // Using http (built-in)
+  http.get(url, (res) => {
+    console.log(`Keep-alive ping sent. Status Code: ${res.statusCode}`);
+  }).on('error', (err) => {
+    console.error('Error during keep-alive ping:', err.message);
+  });
+
+  // OR using axios (optional)
+  /*
+  axios.get(url)
+    .then(res => {
+      console.log(`Keep-alive ping sent. Status Code: ${res.status}`);
+    })
+    .catch(err => {
+      console.error('Error during keep-alive ping:', err.message);
+    });
+  */
+};
+
+// Ping the server every 5 minutes (300000 ms)
+setInterval(keepAlive, 300000); // Adjust the interval as needed
+
+// Your server logic here
+
 relay()
 
 app.listen(5000, ()=>{

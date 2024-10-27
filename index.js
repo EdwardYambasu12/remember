@@ -7,7 +7,7 @@ const news = require("./news.js")
 const search = require("./search.js")
 const app = express()
 const axios = require("axios")
-const reloader = require("./reload.js")
+//const reloader = require("./reload.js")
 const matches = require("./get_matches.js")
 const result = require("./result.js")
 const league = require("./inner_league.js")
@@ -38,6 +38,31 @@ app.use(search)
 app.use(result)
 app.use(team)
 app.use(player)
+const https = require('https');
+
+ // Replace with your actual HTTPS URL
+const keepAlive = () => {
+	const url =   "https://remember-0j3b.onrender.com/match"
+https.get(url, (res) => {
+  console.log(`Status Code: ${res.statusCode}`);
+
+  // Collect response data (if needed)
+  let data = '';
+  res.on('data', chunk => {
+    data += chunk;
+  });
+
+  res.on('end', () => {
+    console.log('Response Data:', data); // Log full response
+  });
+
+}).on('error', (err) => {
+  console.error('Request Error:', err.message);
+});
+
+}	
+
+setTimeout(keepAlive, 100000)
 
 function relay(){
 

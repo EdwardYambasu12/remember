@@ -44,7 +44,7 @@ const https = require('https');
 
  // Replace with your actual HTTPS URL
 const keepAlive = () => {
-	const url =   "https://remember-0j3b.onrender.com/users"
+	const url =   "https://remember-0j3b.onrender.com/"
 https.get(url, (res) => {
   console.log(`Status Code: ${res.statusCode}`);
 

@@ -1,9 +1,12 @@
 const express = require("express")
 const axios = require("axios")
-
+const { model_schema } = require("./auth.js");
 const matches = express.Router()
 
 matches.get("/man", async(req, res)=>{
+
+  const data = await model_schema.find()
+  console.log( data[0]["variable"])
   const response = await axios.get('https://www.fotmob.com/api/matches', {
   params: {
     'date': '20241030',
@@ -21,16 +24,16 @@ matches.get("/man", async(req, res)=>{
     'sec-fetch-mode': 'cors',
     'sec-fetch-site': 'same-origin',
     'user-agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1 Edg/130.0.0.0',
-    'x-fm-req': 'eyJib2R5Ijp7InVybCI6Ii9hcGkvbWF0Y2hlcz9kYXRlPTIwMjQxMDMwJnRpbWV6b25lPUFmcmljYSUyRk1vbnJvdmlhJmNjb2RlMz1MQlIiLCJjb2RlIjoxNzMwMzI4NzAyNTkxfSwic2lnbmF0dXJlIjoiNDQwN0E0Q0FFOTkxNjdBNTYwM0JDQTlFMUYyQ0M0RDUifQ=='
+    'x-fm-req': data[0]["variable"]
   }
 });
 
   res.json(response.data)
 })
 
-matches.get("/match", (req, res)=>{
+matches.get("/match", async(req, res)=>{
 
-
+ const data = await model_schema.find()
 	const {date, timeZone, code} = req.query
 
 console.log(req.query)
@@ -60,9 +63,8 @@ const response = await axios.get('https://www.fotmob.com/api/matches', {
     'sec-fetch-mode': 'cors',
     'sec-fetch-site': 'same-origin',
     'user-agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1 Edg/130.0.0.0',
-    'x-fm-req': 'eyJib2R5Ijp7InVybCI6Ii9hcGkvbWF0Y2hlcz9kYXRlPTIwMjQxMDMwJnRpbWV6b25lPUFmcmljYSUyRk1vbnJvdmlhJmNjb2RlMz1MQlIiLCJjb2RlIjoxNzMwMzI4NzAyNTkxfSwic2lnbmF0dXJlIjoiNDQwN0E0Q0FFOTkxNjdBNTYwM0JDQTlFMUYyQ0M0RDUifQ=='
-  }
-});
+    'x-fm-req': data[0]["variable"]
+}});
 
 
 
@@ -82,8 +84,8 @@ match_fetch()
 
 
 
-matches.get("/all_leagues", (req, res)=>{
-
+matches.get("/all_leagues",async (req, res)=>{
+ const data = await model_schema.find()
 
 const league_fetch = async()=>{
 
@@ -94,7 +96,7 @@ const response = await axios.get('https://www.fotmob.com/api/allLeagues', {
     'country': 'INT'
   },
   headers: {
-    'x-fm-req': 'eyJib2R5Ijp7InVybCI6Ii9hcGkvYWxsTGVhZ3Vlcz9sb2NhbGU9ZW4mY291bnRyeT1MQlIiLCJjb2RlIjoxNzMwMzI5MTYxNTcyfSwic2lnbmF0dXJlIjoiNzU2RUFERjY0MjkxQzJDNTU2NDAzQzdEMjc3MTNDNEUifQ==',
+    'x-fm-req': data[0]["variable"],
     'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1 Edg/130.0.0.0',
     'Referer': 'https://www.fotmob.com/'
   }

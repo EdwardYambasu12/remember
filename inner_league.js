@@ -1,9 +1,11 @@
 const express = require("express")
 const axios = require("axios")
+const { model_schema } = require("./auth.js");
 
 const league = express.Router()
 
 league.get("/round", async(req, res)=>{
+  const data = await model_schema.find()
     console.log(req.query)
   try{
 const response = await axios.get('https://www.fotmob.com/api/team-of-the-week/rounds', {
@@ -23,7 +25,7 @@ const response = await axios.get('https://www.fotmob.com/api/team-of-the-week/ro
     'sec-fetch-mode': 'cors',
     'sec-fetch-site': 'same-origin',
     'user-agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1 Edg/130.0.0.0',
-    'x-fm-req': 'eyJib2R5Ijp7InVybCI6Ii9hcGkvdGVhbS1vZi10aGUtd2Vlay9yb3VuZHM/bGVhZ3VlSWQ9NTUmc2Vhc29uPTIwMjQlMkYyMDI1JmlzVjQ9dHJ1ZSIsImNvZGUiOjE3MzAzMzYwMzc1MzZ9LCJzaWduYXR1cmUiOiI3MEJGMjIyQkZGMDVGOTQzMTEwODU0MTlENDVDRTA0QyJ9'
+   'x-fm-req': data[0]["result_string"]
   }
 });
 res.json(response.data)
@@ -39,6 +41,7 @@ league.get("/totw", async(req, res)=>{
  try{
 
   console.log(req.query)
+  const data = await model_schema.find()
    const response = await axios.get('https://www.fotmob.com/api/team-of-the-week/team', {
   params: {
     'leagueId': req.query.id,
@@ -57,7 +60,7 @@ league.get("/totw", async(req, res)=>{
     'sec-fetch-mode': 'cors',
     'sec-fetch-site': 'same-origin',
     'user-agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1 Edg/130.0.0.0',
-    'x-fm-req': 'eyJib2R5Ijp7InVybCI6Ii9hcGkvdGVhbS1vZi10aGUtd2Vlay90ZWFtP2xlYWd1ZUlkPTU1JnJvdW5kSWQ9OCZzZWFzb249MjAyNCUyRjIwMjUmaXNWND10cnVlIiwiY29kZSI6MTczMDMzNjAzODA1Mn0sInNpZ25hdHVyZSI6IkREMTA5MDE3MTNEN0JEMzE2M0Y3QjQyMkU5Qjc0MjRDIn0='
+    'x-fm-req': data[0]["result_string"]
   }
 });
       res.json(response.data)
@@ -73,6 +76,7 @@ league.get("/totw", async(req, res)=>{
 league.get("/league", async(req, res)=>{
 
 	try{
+    const data = await model_schema.find()
 const response = await axios.get('https://www.fotmob.com/api/leagues', {
   params: {
     'id': req.query.id,
@@ -92,7 +96,7 @@ const response = await axios.get('https://www.fotmob.com/api/leagues', {
     'If-Modified-Since': '0',
     'sec-fetch-site': 'same-origin',
     'user-agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1 Edg/130.0.0.0',
-    'x-fm-req': 'eyJib2R5Ijp7InVybCI6Ii9hcGkvbGVhZ3Vlcz9pZD01NSZjY29kZTM9TEJSIiwiY29kZSI6MTczMDMyOTkyMjQyOX0sInNpZ25hdHVyZSI6IjgzMzZCM0Y1NTRBRDMwQTk2OTdDQkI3QkY2ODVBOEUzIn0='
+    'x-fm-req': data[0]["result_string"]
   }
 });
 	res.json(response.data)
@@ -106,6 +110,7 @@ catch(e){
 league.get("/league_news", async(req, res)=>{
 
   try{
+    const data = await model_schema.find()
   const response = await axios.get('https://www.fotmob.com/api/tlnews', {
   params: {
     'id': req.query.id,

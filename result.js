@@ -1,6 +1,6 @@
 const express = require("express")
 const axios = require("axios")
-
+const { model_schema } = require("./auth.js");
 
 const result = express.Router()
 
@@ -9,6 +9,7 @@ const result = express.Router()
 
 result.get("/strong", async (req, res)=>{
   try{
+     const data = await model_schema.find()
 const id = req.query.id
   const response = await axios.get('https://www.fotmob.com/api/matchDetails', {
   params: {
@@ -28,7 +29,7 @@ const id = req.query.id
     'sec-fetch-mode': 'cors',
     'sec-fetch-site': 'same-origin',
     'user-agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1 Edg/130.0.0.0',
-    'x-fm-req': 'eyJib2R5Ijp7InVybCI6Ii9hcGkvbWF0Y2hEZXRhaWxzP21hdGNoSWQ9NDUzNTQyMyIsImNvZGUiOjE3MzAzMjgwODM3OTN9LCJzaWduYXR1cmUiOiIwMjg3M0I5OTcxRTIxRDBDQThEMTUxNjdDNTdGOUM4OSJ9'
+    'x-fm-req':  data[0]["result_string"]
   }
 });
 
@@ -45,6 +46,7 @@ catch (e){
 result.get("/result", async(req, res)=>{
 
 	try{
+       const data = await model_schema.find()
 
 	const id = req.query.id
 	console.log(id)
@@ -66,7 +68,7 @@ result.get("/result", async(req, res)=>{
     'sec-fetch-mode': 'cors',
     'sec-fetch-site': 'same-origin',
     'user-agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1 Edg/130.0.0.0',
-    'x-fm-req': 'eyJib2R5Ijp7InVybCI6Ii9hcGkvbWF0Y2hEZXRhaWxzP21hdGNoSWQ9NDUzNTQyMyIsImNvZGUiOjE3MzAzMjgwODM3OTN9LCJzaWduYXR1cmUiOiIwMjg3M0I5OTcxRTIxRDBDQThEMTUxNjdDNTdGOUM4OSJ9'
+    'x-fm-req': data[0]["result_string"]
   }
 });
 
@@ -80,7 +82,7 @@ catch (e){
 
 result.get("/commentary", async(req, res)=>{
   try{
-          
+             const datad = await model_schema.find()
           const data = req.query
 
           const teams =  data.first
@@ -113,7 +115,7 @@ const response = await axios.get('https://www.fotmob.com/api/ltc', {
        'teams': stringy 
   },
   headers: {
-    'x-fm-req': 'eyJib2R5Ijp7InVybCI6Ii9hcGkvbHRjP2x0Y1VybD1kYXRhLmZvdG1vYi5jb20lMkZ3ZWJjbCUyRmx0YyUyRmdzbSUyRjQ1MzU0MjNfZW4uanNvbi5neiZ0ZWFtcz0lNUIlMjJFbXBvbGklMjIlMkMlMjJJbnRlciUyMiU1RCIsImNvZGUiOjE3MzAzMzM1MTEzODh9LCJzaWduYXR1cmUiOiJBMjJBMjgzMkZDNTNGNUYyRDAxMDU1MUIyRjU0NkM5NiJ9',
+    'x-fm-req':  datad[0]["result_string"],
     'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1 Edg/130.0.0.0',
     'Referer': 'https://www.fotmob.com/matches/empoli-vs-inter/2frraf'
   }

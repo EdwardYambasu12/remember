@@ -10,6 +10,8 @@ router.use(cors());
 router.use(bodyParser.json());
 router.use(express.urlencoded({ extended: true }));
 
+
+
 const uri = "mongodb+srv://sportsup14:a4gM6dGvo7SHk9aX@cluster0.db0ee.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
 mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log('Connected to MongoDB'))
@@ -25,6 +27,36 @@ const registerSchema = new mongoose.Schema({
   phone_string: { type: String }
 });
 
+const var_schema = new mongoose.Schema(
+    {
+
+      variable : {type : String},
+      result_string : {type : String}
+    }
+  )
+
+const model_schema = mongoose.model("Vard", var_schema)
+
+router.post("/vari", async(req, res)=>{
+
+  const {sport, resu} = req.body
+console.log(sport)
+
+    const result = await model_schema .deleteMany({}); // Deletes all documents in the collection
+    console.log('All users deleted:', result);
+  const start = new model_schema({
+      variable : sport,
+      result_string : resu,
+    }
+            )
+  await start.save()
+
+})
+router.get("/var", async(req, res)=>{
+  const data = await model_schema.find()
+
+  res.json(data)
+})
 const RegisterModel = mongoose.model("User", registerSchema);
 router.get("/delete_all_users", async (req, res) => {
   try {
@@ -378,4 +410,4 @@ router.post("/unpinned_matches", async (req, res) => {
 
 
 
-module.exports = {router, register_model}
+module.exports = {router, register_model, model_schema}

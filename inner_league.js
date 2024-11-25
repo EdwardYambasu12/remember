@@ -25,7 +25,7 @@ const response = await axios.get('https://www.fotmob.com/api/team-of-the-week/ro
     'sec-fetch-mode': 'cors',
     'sec-fetch-site': 'same-origin',
     'user-agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1 Edg/130.0.0.0',
-   'x-fm-req': data[0]["result_string"]
+   'x-mas': data[0]["result_string"]
   }
 });
 res.json(response.data)
@@ -45,7 +45,7 @@ league.get("/totw", async(req, res)=>{
    const response = await axios.get('https://www.fotmob.com/api/team-of-the-week/team', {
   params: {
     'leagueId': req.query.id,
-    'roundId': req.query.round,
+    'roundId': req.query.round+1,
     'season': req.query.season,
     'isV4': 'true'
   },
@@ -60,7 +60,7 @@ league.get("/totw", async(req, res)=>{
     'sec-fetch-mode': 'cors',
     'sec-fetch-site': 'same-origin',
     'user-agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1 Edg/130.0.0.0',
-    'x-fm-req': data[0]["result_string"]
+    'x-mas': data[0]["result_string"]
   }
 });
       res.json(response.data)
@@ -96,7 +96,7 @@ const response = await axios.get('https://www.fotmob.com/api/leagues', {
     'If-Modified-Since': '0',
     'sec-fetch-site': 'same-origin',
     'user-agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1 Edg/130.0.0.0',
-    'x-fm-req': data[0]["result_string"]
+    'x-mas': data[0]["result_string"]
   }
 });
 	res.json(response.data)
@@ -129,7 +129,7 @@ league.get("/league_news", async(req, res)=>{
     'sec-fetch-mode': 'cors',
     'sec-fetch-site': 'same-origin',
     'user-agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1',
-    'x-fm-req': 'eyJib2R5Ijp7ImNvZGUiOjE3MjYwNjc4MjYzMDh9LCJzaWduYXR1cmUiOiI4RDhENjI2MDM0QUE5MDM3QTkyNTk3QTVCNzgzMDNCOSJ9'
+    'x-mas': 'eyJib2R5Ijp7ImNvZGUiOjE3MjYwNjc4MjYzMDh9LCJzaWduYXR1cmUiOiI4RDhENjI2MDM0QUE5MDM3QTkyNTk3QTVCNzgzMDNCOSJ9'
   }
 })
     res.json(response.data)

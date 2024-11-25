@@ -29,7 +29,7 @@ const id = req.query.id
     'sec-fetch-mode': 'cors',
     'sec-fetch-site': 'same-origin',
     'user-agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1 Edg/130.0.0.0',
-    'x-fm-req':  data[0]["result_string"]
+    'x-mas':  data[0]["result_string"]
   }
 });
 
@@ -68,7 +68,7 @@ result.get("/result", async(req, res)=>{
     'sec-fetch-mode': 'cors',
     'sec-fetch-site': 'same-origin',
     'user-agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1 Edg/130.0.0.0',
-    'x-fm-req': data[0]["result_string"]
+    'x-mas': data[0]["result_string"]
   }
 });
 
@@ -114,12 +114,15 @@ const response = await axios.get('https://www.fotmob.com/api/ltc', {
     'ltcUrl': "data.fotmob.com/webcl/ltc/gsm/"+data.id+"_"+inc+".json.gz",
        'teams': stringy 
   },
-  headers: {
-    'x-fm-req':  datad[0]["result_string"],
-    'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1 Edg/130.0.0.0',
-    'Referer': 'https://www.fotmob.com/matches/empoli-vs-inter/2frraf'
+ headers: {
+    'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1',
+    'x-mas': 'eyJib2R5Ijp7InVybCI6Ii9hcGkvbHRjP2x0Y1VybD1kYXRhLmZvdG1vYi5jb20lMkZ3ZWJjbCUyRmx0YyUyRmdzbSUyRjQ1MDY1NDFfZW4uanNvbi5neiZ0ZWFtcz0lNUIlMjJOZXdjYXN0bGUrVW5pdGVkJTIyJTJDJTIyV2VzdCtIYW0rVW5pdGVkJTIyJTVEIiwiY29kZSI6MTczMjU2OTE5NTUyMCwiZm9vIjoiODk2MzIxNmVmIn0sInNpZ25hdHVyZSI6IkY1NTU5OEVGQzhEQURDRjFBQzFEMzI4NEYxRTE4OUJCIn0=',
+    'Referer': 'https://www.fotmob.com/matches/west-ham-vs-newcastle/2yilb8'
   }
 });
+
+
+
             res.json(response.data)
             console.log(response.data)
             

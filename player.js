@@ -24,7 +24,7 @@ const response = await axios.get('https://www.fotmob.com/api/playerData', {
     'sec-fetch-mode': 'cors',
     'sec-fetch-site': 'same-origin',
     'user-agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1 Edg/130.0.0.0',
-	 'x-fm-req': data[0]["result_string"] }
+	 'x-mas': data[0]["result_string"] }
 });
 
 	res.json(response.data)

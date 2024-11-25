@@ -49,6 +49,7 @@ league.get("/totw", async(req, res)=>{
     'season': req.query.season,
     'isV4': 'true'
   },
+  
   headers: {
     'accept': '*/*',
     'accept-language': 'en-US,en;q=0.9',

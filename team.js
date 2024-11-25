@@ -12,7 +12,7 @@ const response = await axios.get('https://www.fotmob.com/api/teams', {
     'ccode3': 'LBR'
   },
   headers: {
-    'x-fm-req':data[0]["result_string"],
+    'x-mas':data[0]["result_string"],
     'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1 Edg/130.0.0.0',
     'Referer': 'https://www.fotmob.com/teams/10233/overview/genoa'
   }
@@ -46,7 +46,7 @@ team.get("/team_news", async(req, res)=>{
     'sec-fetch-mode': 'cors',
     'sec-fetch-site': 'same-origin',
     'user-agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1 Edg/130.0.0.0',
-    'x-fm-req': 'eyJib2R5Ijp7InVybCI6Ii9hcGkvdGxuZXdzP2lkPTk4NjYmdHlwZT10ZWFtJmxhbmd1YWdlPWVuJnN0YXJ0SW5kZXg9MCIsImNvZGUiOjE3MzA0NjA5MDY5MzJ9LCJzaWduYXR1cmUiOiI4NDU1QjgzMzE0Mjk0NDYzQUMxQTg3MzQ3ODA5NEY5RiJ9'
+    'x-mas': 'eyJib2R5Ijp7InVybCI6Ii9hcGkvdGxuZXdzP2lkPTk4NjYmdHlwZT10ZWFtJmxhbmd1YWdlPWVuJnN0YXJ0SW5kZXg9MCIsImNvZGUiOjE3MzA0NjA5MDY5MzJ9LCJzaWduYXR1cmUiOiI4NDU1QjgzMzE0Mjk0NDYzQUMxQTg3MzQ3ODA5NEY5RiJ9'
   }
 });
 	res.json(response.data)

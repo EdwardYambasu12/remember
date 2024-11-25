@@ -45,7 +45,7 @@ league.get("/totw", async(req, res)=>{
    const response = await axios.get('https://www.fotmob.com/api/team-of-the-week/team', {
   params: {
     'leagueId': req.query.id,
-    'roundId': req.query.round+1,
+    'roundId': req.query.round,
     'season': req.query.season,
     'isV4': 'true'
   },

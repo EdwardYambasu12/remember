@@ -116,7 +116,7 @@ const response = await axios.get('https://www.fotmob.com/api/ltc', {
   },
  headers: {
     'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1',
-    'x-mas': 'eyJib2R5Ijp7InVybCI6Ii9hcGkvbHRjP2x0Y1VybD1kYXRhLmZvdG1vYi5jb20lMkZ3ZWJjbCUyRmx0YyUyRmdzbSUyRjQ1MDY1NDFfZW4uanNvbi5neiZ0ZWFtcz0lNUIlMjJOZXdjYXN0bGUrVW5pdGVkJTIyJTJDJTIyV2VzdCtIYW0rVW5pdGVkJTIyJTVEIiwiY29kZSI6MTczMjU2OTE5NTUyMCwiZm9vIjoiODk2MzIxNmVmIn0sInNpZ25hdHVyZSI6IkY1NTU5OEVGQzhEQURDRjFBQzFEMzI4NEYxRTE4OUJCIn0=',
+     'x-mas': data[0]["result_string"]
     'Referer': 'https://www.fotmob.com/matches/west-ham-vs-newcastle/2yilb8'
   }
 });

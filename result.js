@@ -125,7 +125,7 @@ headers: {
     'sec-fetch-mode': 'cors',
     'sec-fetch-site': 'same-origin',
     'user-agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1',
-    'x-mas': 'eyJib2R5Ijp7InVybCI6Ii9hcGkvbHRjP2x0Y1VybD1kYXRhLmZvdG1vYi5jb20lMkZ3ZWJjbCUyRmx0YyUyRmdzbSUyRjQ2MjE1NDBfZW4uanNvbi5neiZ0ZWFtcz0lNUIlMjJCYXJjZWxvbmElMjIlMkMlMjJCcmVzdCUyMiU1RCIsImNvZGUiOjE3MzI2Njc1NjYwOTQsImZvbyI6Ijg5NjMyMTZlZiJ9LCJzaWduYXR1cmUiOiI1Qjg0NDI0OTE4Q0M3QjhDRUY3Rjk2NDAyMjY4ODYxMiJ9'
+    'x-mas': data[0]["comm"]
   }
 });
 

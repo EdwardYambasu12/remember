@@ -31,6 +31,28 @@ matches.get("/man", async(req, res)=>{
   res.json(response.data)
 })
 
+matches.get("/audio_matches", async (req, res)=>{
+
+
+const response = await axios.get('https://www.fotmob.com/api/audio-matches', {
+  headers: {
+    'accept': '*/*',
+    'accept-language': 'en-US,en;q=0.9',
+    'cookie': '_cc_id=fd3b698f700d90530b559e2e0982d514; _pubcid=e0c28140-8d67-4033-a102-155ad81db4e4; _pubcid_cst=zix7LPQsHA%3D%3D; _au_1d=AU1D-0100-001718667612-LQHKCG03-USAL; g_state={"i_p":1732733726602,"i_l":4}; _ga=GA1.1.2119553545.1718667549; _ga_SQ24F7Q7YW=GS1.1.1731788145.4.0.1731788152.0.0.0; _ga_K2ECMCJBFQ=GS1.1.1731788144.5.0.1731788152.0.0.0; _hjSessionUser_2585474=eyJpZCI6IjI2MzYwODdjLWQ5NzQtNWI2Yi05ZmZjLWJiN2FkMjE4YzgwNyIsImNyZWF0ZWQiOjE3MzI1NDcyODA4NTQsImV4aXN0aW5nIjp0cnVlfQ==; u:location=%7B%22countryCode%22%3A%22LR%22%2C%22ccode3%22%3A%22LBR%22%2C%22timezone%22%3A%22Africa%2FMonrovia%22%2C%22ip%22%3A%2241.191.107.55%22%2C%22regionId%22%3A%22MO%22%2C%22regionName%22%3A%22Montserrado%20County%22%7D; panoramaId_expiry=1733051971690; FCNEC=%5B%5B%22AKsRol_G8ZfR37BYKlxRlb2EgwZ9K6FQHhwL7lNYfpEc028oMXDD9lnhtcyTAH5_-sbL7LVdcsKVySGexFRW6bWewTUl5iC1mOIP9a8XdIb3sGirRDuKI4NdORK8fJLArVSGyN0cbQzQa-n7CPyverHy_ATRzzv0ow%3D%3D%22%5D%5D; cto_bundle=864bBV9mVkRhV0FVeUZBaFVXd3Npcm5KWkxiclYlMkJZb3Q3blJDOTRlVmRGZEF3OTlhaXV0VzdOcGRmN2RXd1FJNFo2OWFOd20yVmVjSzJyZ3NyY0lISWlTcnElMkJybUlwc3NZQ2hWR3BHWXJYQ0dlNGF1SVUwRXQzUUdRN3NOM0U0NVlYNFUxMUdCM0FPOGp5UXp1Q01NT09vM1RBJTNEJTNE; __gads=ID=92d5d724039964be:T=1718667552:RT=1732965919:S=ALNI_MaDE1K0PYrz7DyLAYDwmlqRSaVU4w; __gpi=UID=00000e3edcb15e28:T=1718667552:RT=1732965919:S=ALNI_MbTHt_CqKudRyJHJ7GDrOBF642EAg; __eoi=ID=a1c3f7154f50fa8b:T=1718667552:RT=1732965919:S=AA-AfjZ02jQeU68iiwfAT-o6Usbz; _hjSession_2585474=eyJpZCI6IjQ1YzlhYzQwLTI0ZGMtNDNjOC05MTMzLWU4ZWZmZWRhM2I4ZSIsImMiOjE3MzI5NjkyNzQ1NjcsInMiOjAsInIiOjAsInNiIjowLCJzciI6MCwic2UiOjAsImZzIjowLCJzcCI6MH0=; _ga_G0V1WDW9B2=GS1.1.1732969275.74.0.1732969275.0.0.0',
+    'if-none-match': '"d6fjvfkh5t7a"',
+    'priority': 'u=1, i',
+    'referer': 'https://www.fotmob.com/',
+    'sec-fetch-dest': 'empty',
+    'sec-fetch-mode': 'cors',
+    'sec-fetch-site': 'same-origin',
+    'user-agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1 Edg/131.0.0.0',
+    'x-mas': 'eyJib2R5Ijp7InVybCI6Ii9hcGkvYXVkaW8tbWF0Y2hlcyIsImNvZGUiOjE3MzI5NjkyNzc0MjUsImZvbyI6ImU5NzNmYzczZiJ9LCJzaWduYXR1cmUiOiI0RTQ2NkE4Qjk3QTIwMTdDOTlGRjJDMDhCMkUxQ0Q3MCJ9'
+  }
+});
+
+res.json(response.data)
+})
+
 matches.get("/match", async(req, res)=>{
 
  const data = await model_schema.find()

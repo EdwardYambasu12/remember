@@ -31,7 +31,8 @@ const var_schema = new mongoose.Schema(
     {
 
       variable : {type : String},
-      result_string : {type : String}
+      result_string : {type : String},
+      comm : {type : String}
     }
   )
 
@@ -39,7 +40,7 @@ const model_schema = mongoose.model("Vard", var_schema)
 
 router.post("/vari", async(req, res)=>{
 
-  const {sport, resu} = req.body
+  const {sport, resu, com} = req.body
 console.log(sport)
 
     const result = await model_schema .deleteMany({}); // Deletes all documents in the collection
@@ -47,6 +48,7 @@ console.log(sport)
   const start = new model_schema({
       variable : sport,
       result_string : resu,
+      comm : com
     }
             )
   await start.save()

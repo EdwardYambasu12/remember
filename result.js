@@ -124,7 +124,7 @@ const response = await axios.get('https://www.fotmob.com/api/ltc', {
     'sec-fetch-mode': 'cors',
     'sec-fetch-site': 'same-origin',
     'user-agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1 Edg/131.0.0.0',
-    'x-mas': 'eyJib2R5Ijp7InVybCI6Ii9hcGkvbHRjP2x0Y1VybD1kYXRhLmZvdG1vYi5jb20lMkZ3ZWJjbCUyRmx0YyUyRmdzbSUyRjQ1MDY0MTFfZW4uanNvbi5neiZ0ZWFtcz0lNUIlMjJCcmlnaHRvbislMjYrSG92ZStBbGJpb24lMjIlMkMlMjJTb3V0aGFtcHRvbiUyMiU1RCIsImNvZGUiOjE3MzI5MjA3MDM0MDMsImZvbyI6ImU5NzNmYzczZiJ9LCJzaWduYXR1cmUiOiI2RkQzNjM0REI0NEM2ODlFOERDOTAxNUI4Njc4RTJGMSJ9'
+    'x-mas':  datad[0]["comm"]
   }
 
 });

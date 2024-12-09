@@ -145,6 +145,9 @@ result.get("/audio_commentary", async(req, res)=>{
 
   const {id} = req.query
 
+ 
+  console.log(id, "this is the id for audio")
+
   const response = await axios.get('https://www.fotmob.com/api/audio-live-stream', {
   params: {
     'id': id,
@@ -153,7 +156,7 @@ result.get("/audio_commentary", async(req, res)=>{
   },
   headers: {
     'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1 Edg/131.0.0.0',
-    'x-mas': 'eyJib2R5Ijp7InVybCI6Ii9hcGkvYXVkaW8tbGl2ZS1zdHJlYW0/aWQ9NDUwNjg5NSZhY2NlcHRMYW5ncz1lbi1VUyZ1c2VyTGFuZz1lbiIsImNvZGUiOjE3MzI5Njk0NTg2NTAsImZvbyI6ImU5NzNmYzczZiJ9LCJzaWduYXR1cmUiOiJENkJDNzY5QjY4QjAyREQxMzdFNjg1QzQwOUM2Q0I5NSJ9',
+    'x-mas': 'eyJib2R5Ijp7InVybCI6Ii9hcGkvYXVkaW8tbGl2ZS1zdHJlYW0/aWQ9NDUwNjk0MSZhY2NlcHRMYW5ncz1lbi1VUyZ1c2VyTGFuZz1lbiIsImNvZGUiOjE3MzMyNTQxODUxOTgsImZvbyI6Ijg5MDUwMjBkNyJ9LCJzaWduYXR1cmUiOiIwMzY1OEFGQjAyN0NCNjU5RDREQzUzQkJBODlFMkQ0MiJ9',
     'Referer': 'https://www.fotmob.com/matches/las-palmas-vs-barcelona/2dfogo'
   }
 });

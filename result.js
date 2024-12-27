@@ -102,7 +102,7 @@ result.get("/match_news",  async(req, res)=>{
   }
 });
 
-  res.json(respons.data)
+  res.json(response.data)
 })
 
 result.get("/commentary", async(req, res)=>{

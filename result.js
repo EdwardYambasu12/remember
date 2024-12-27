@@ -80,6 +80,31 @@ catch (e){
 }
 })
 
+result.get("/match_news",  async(req, res)=>{
+  const response = await axios.get('https://www.fotmob.com/api/matchNews', {
+  params: {
+    'id': req.query.id.id,
+    'ccode3': 'LBR',
+    'lang': 'en'
+  },
+  headers: {
+    'accept': '*/*',
+    'accept-language': 'en-US,en;q=0.9',
+    'cookie': '_cc_id=fd3b698f700d90530b559e2e0982d514; _pubcid=e0c28140-8d67-4033-a102-155ad81db4e4; _pubcid_cst=zix7LPQsHA%3D%3D; _au_1d=AU1D-0100-001718667612-LQHKCG03-USAL; _hjSessionUser_2585474=eyJpZCI6IjI2MzYwODdjLWQ5NzQtNWI2Yi05ZmZjLWJiN2FkMjE4YzgwNyIsImNyZWF0ZWQiOjE3MzI1NDcyODA4NTQsImV4aXN0aW5nIjp0cnVlfQ==; g_state={"i_p":1736286556611,"i_l":4}; _ga_SQ24F7Q7YW=GS1.1.1734878543.8.0.1734878547.0.0.0; _ga_K2ECMCJBFQ=GS1.1.1734878538.9.1.1734878977.0.0.0; _ga=GA1.1.2119553545.1718667549; u:location=%7B%22countryCode%22%3A%22LR%22%2C%22ccode3%22%3A%22LBR%22%2C%22timezone%22%3A%22Africa%2FMonrovia%22%2C%22ip%22%3A%2241.57.95.208%22%7D; __gads=ID=92d5d724039964be:T=1718667552:RT=1735295373:S=ALNI_MaDE1K0PYrz7DyLAYDwmlqRSaVU4w; __gpi=UID=00000e3edcb15e28:T=1718667552:RT=1735295373:S=ALNI_MbTHt_CqKudRyJHJ7GDrOBF642EAg; __eoi=ID=0dd2145e8d3f3c53:T=1734298662:RT=1735295373:S=AA-AfjZ0P-59YSEi2rEQUgujHVi-; FCNEC=%5B%5B%22AKsRol9cc7Z3YVbPlfTrFLyIlHBGYd3kq4SsKJePQb1d0v9Zpt3QewdVeda6xfrFqvKGN8Gtb8l1WEJjn4OZcxnGI2qCd-fKk0OfTmB37ExBmYfcHZSeZ4YZ68iPPRK8c4Kf-9xnGCcM4cVx1gi-fHn_6ieNYtxtog%3D%3D%22%5D%5D; panoramaId_expiry=1735381776231; cto_bundle=v0GX3V9mVkRhV0FVeUZBaFVXd3Npcm5KWkxWYVJtbEphdUMyMzB2OEJabkppVjVIdTNSV3RsZmlYa1Jyc05nJTJGRU1IcEZrTTFQUzRWZXR1NGRDTTJWOXRSdUpOYmFpR0hoS3dQRklSJTJCUWJnUiUyRmxKNHklMkZwU3FFUkRQWU5uYWRQanBNRktjb0FSbHREUVJNYmVtTnZoTkNJQWlJQSUzRCUzRA; _ga_G0V1WDW9B2=GS1.1.1735299319.90.0.1735299333.0.0.0',
+    'if-none-match': '"8dohn1chlp3qd"',
+    'priority': 'u=1, i',
+    'referer': 'https://www.fotmob.com/matches/man-city-vs-everton/2fauom',
+    'sec-fetch-dest': 'empty',
+    'sec-fetch-mode': 'cors',
+    'sec-fetch-site': 'same-origin',
+    'user-agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1 Edg/131.0.0.0',
+    'x-mas': 'eyJib2R5Ijp7InVybCI6Ii9hcGkvbWF0Y2hOZXdzP2lkPTQ1MDY0ODgmY2NvZGUzPUxCUiZsYW5nPWVuIiwiY29kZSI6MTczNTI5OTMzNjI4OSwiZm9vIjoiZTk2YjYwYTIxIn0sInNpZ25hdHVyZSI6IjlBNTVGMjc0MjVENjFGNTc4RDJEMTIxNTA0MDEzQ0IzIn0='
+  }
+});
+
+  res.json(respons.data)
+})
+
 result.get("/commentary", async(req, res)=>{
   try{
              const datad = await model_schema.find()

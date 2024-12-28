@@ -32,7 +32,8 @@ const var_schema = new mongoose.Schema(
 
       variable : {type : String},
       result_string : {type : String},
-      comm : {type : String}
+      comm : {type : String},
+      m_news : {type : String}
     }
   )
 
@@ -40,7 +41,7 @@ const model_schema = mongoose.model("Vard", var_schema)
 
 router.post("/vari", async(req, res)=>{
 
-  const {sport, resu, com} = req.body
+  const {sport, resu, com, news_m} = req.body
 console.log(sport)
 
     const result = await model_schema .deleteMany({}); // Deletes all documents in the collection
@@ -48,7 +49,8 @@ console.log(sport)
   const start = new model_schema({
       variable : sport,
       result_string : resu,
-      comm : com
+      comm : com,
+      m_news : news_m
     }
             )
   await start.save()
@@ -142,12 +144,12 @@ router.post("/update_token", async (req, res) => {
 router.post('/favorite_league', async (req, res) => {
   try {
     // Log the request body for debugging
-    console.log(req.body);
+    
 
     // Ensure req.body.pinned is a valid JSON string and parse it
 
 
-
+    console.log(req.body.id_)
     // Update the user's favorite leagues
     const updateResult = await register_model.updateOne(
       { _id: req.body.id_ },
@@ -284,7 +286,7 @@ router.post("/favorite_team_remove", async (req, res) => {
 router.post('/favorite_player', async (req, res) => {
   try {
     // Log the request body for debugging
-    console.log(req.body);
+    console.log(req.body.id_);
 
     // Ensure req.body.pinned is a valid JSON string and parse it
 

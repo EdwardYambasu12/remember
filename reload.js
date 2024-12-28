@@ -170,25 +170,23 @@ async function send_notification(message) {
       const changed = JSON.parse(message.match)
       console.log(changed.id)
                 async function final_sender(token, title, body) {
-    const message = {
-        notification: {
-            title: title,
-            body: body,
-        },
-token: token, // The FCM registration token of the device
-       
-
-         webpush: {
+   const message = {
+  notification: {
+    title: title,
+    body: body,
+  },
+  token: token, // The FCM registration token of the device
+  webpush: {
     fcm_options: {
-      link: "https://sportsupd.com/result/"+changed.id  // The link to open when the notification is clicked
+      link: "https://sportsupd.com/result/" + changed.id, // The link to open when the notification is clicked
     },
-     notification: {
-      icon: "https://www.sportsupd.com/src/images/icon.jpg"  // Optional icon for the notification
-    }
+    notification: {
+      icon: "https://www.sportsupd.com/src/images/icon.jpg", // Optional icon for the notification
+      sound: "/sounds/example_sound.mp3", // Path to the custom notification sound
+    },
+  },
+};
 
-}
-        
-    };
 
     try {
         const response = await admin.messaging().send(message);

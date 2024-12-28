@@ -81,6 +81,8 @@ catch (e){
 })
 
 result.get("/match_news",  async(req, res)=>{
+
+  const data = await model_schema.find()
   const response = await axios.get('https://www.fotmob.com/api/matchNews', {
   params: {
     'id': req.query.id.id,
@@ -98,7 +100,7 @@ result.get("/match_news",  async(req, res)=>{
     'sec-fetch-mode': 'cors',
     'sec-fetch-site': 'same-origin',
     'user-agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1 Edg/131.0.0.0',
-    'x-mas': 'eyJib2R5Ijp7InVybCI6Ii9hcGkvbWF0Y2hOZXdzP2lkPTQ1MDY0ODgmY2NvZGUzPUxCUiZsYW5nPWVuIiwiY29kZSI6MTczNTI5OTMzNjI4OSwiZm9vIjoiZTk2YjYwYTIxIn0sInNpZ25hdHVyZSI6IjlBNTVGMjc0MjVENjFGNTc4RDJEMTIxNTA0MDEzQ0IzIn0='
+    'x-mas': data[0]["m_news"]
   }
 });
 

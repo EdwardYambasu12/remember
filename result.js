@@ -80,6 +80,34 @@ catch (e){
 }
 })
 
+
+result.get("/match_odds", async(req, res)=>{
+
+       const data = await model_schema.find()
+
+
+  const response = await axios.get('https://www.fotmob.com/api/matchOdds', {
+  params: {
+    'matchId': req.query.id.id,
+    'ccode3': 'INT'
+  },
+  headers: {
+    'accept': '*/*',
+    'accept-language': 'en-US,en;q=0.9',
+    'cookie': '_cc_id=fd3b698f700d90530b559e2e0982d514; _pubcid=e0c28140-8d67-4033-a102-155ad81db4e4; _pubcid_cst=zix7LPQsHA%3D%3D; _au_1d=AU1D-0100-001718667612-LQHKCG03-USAL; _hjSessionUser_2585474=eyJpZCI6IjI2MzYwODdjLWQ5NzQtNWI2Yi05ZmZjLWJiN2FkMjE4YzgwNyIsImNyZWF0ZWQiOjE3MzI1NDcyODA4NTQsImV4aXN0aW5nIjp0cnVlfQ==; g_state={"i_p":1736286556611,"i_l":4}; _ga_SQ24F7Q7YW=GS1.1.1734878543.8.0.1734878547.0.0.0; _ga_K2ECMCJBFQ=GS1.1.1734878538.9.1.1734878977.0.0.0; _ga=GA1.1.2119553545.1718667549; u:location=%7B%22countryCode%22%3A%22LR%22%2C%22ccode3%22%3A%22LBR%22%2C%22timezone%22%3A%22Africa%2FMonrovia%22%2C%22ip%22%3A%2241.191.105.235%22%2C%22regionId%22%3A%22MO%22%2C%22regionName%22%3A%22Montserrado%20County%22%7D; _hjSession_2585474=eyJpZCI6ImMyNGM0MzVkLWU5MWQtNDQyNy1hNTJjLWZiN2YyMzM5ZjJmNyIsImMiOjE3MzU5OTI5MTIzMDAsInMiOjAsInIiOjAsInNiIjowLCJzciI6MCwic2UiOjAsImZzIjowLCJzcCI6MH0=; __gads=ID=92d5d724039964be:T=1718667552:RT=1735992914:S=ALNI_MaDE1K0PYrz7DyLAYDwmlqRSaVU4w; __gpi=UID=00000e3edcb15e28:T=1718667552:RT=1735992914:S=ALNI_MbTHt_CqKudRyJHJ7GDrOBF642EAg; __eoi=ID=0dd2145e8d3f3c53:T=1734298662:RT=1735992914:S=AA-AfjZ0P-59YSEi2rEQUgujHVi-; panoramaId_expiry=1736079316903; panoramaId=3898e4eff149868f9adc1fb98479a9fb927a8f07a7791faa1de8aec5ee287b78; panoramaIdType=panoDevice; cto_bundle=oqla9F9mVkRhV0FVeUZBaFVXd3Npcm5KWkxTQjdrekR5dWRRWlg3ViUyRmh5cGQ1QmlZWXFTWHFxVTZsY1clMkZvZVJhWnRXTThibUpVWDRzdiUyRkN4SU5UcndKWUx3Q2NUeXQ4NUJOVXVMc0RydEc1WG53c0c2MEFKdk0wZFRlakpRNlIxMTRxdklnVGs3blklMkJyMVlsTWluNyUyQiUyQnMxM2clM0QlM0Q; FCNEC=%5B%5B%22AKsRol-XeM02tsiBsbfx85jne3ubInIo3Zj3EHDgg8vM9TXzP-N8FM6qOFMezz09x0SxkbeFalUjjjLZjOwvxJVdDAHS_uB1rp1r9xCSsAMXCEjhLNi2iA6g1clBL1tvKF4yK_6NCHyWfbzfqPbLyZH1bzl3kzIcZg%3D%3D%22%5D%5D; _ga_G0V1WDW9B2=GS1.1.1735992913.96.1.1735992988.0.0.0',
+    'priority': 'u=1, i',
+    'referer': 'https://www.fotmob.com/matches/tottenham-vs-newcastle/2xr2ka',
+    'sec-fetch-dest': 'empty',
+    'sec-fetch-mode': 'cors',
+    'sec-fetch-site': 'same-origin',
+    'user-agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1 Edg/131.0.0.0',
+    'x-mas': data[0]["odds"],
+  }
+});
+
+
+res.json(response.data)
+})
 result.get("/match_news",  async(req, res)=>{
 
   const data = await model_schema.find()

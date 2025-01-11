@@ -111,19 +111,20 @@ res.json(response.data)
 result.get("/match_news",  async(req, res)=>{
 
   const data = await model_schema.find()
+
+  console.log(req.query.id, "News Id")
   const response = await axios.get('https://www.fotmob.com/api/matchNews', {
   params: {
-    'id': req.query.id.id,
+    'id': req.query.id,
     'ccode3': 'LBR',
     'lang': 'en'
   },
   headers: {
     'accept': '*/*',
     'accept-language': 'en-US,en;q=0.9',
-    'cookie': '_cc_id=fd3b698f700d90530b559e2e0982d514; _pubcid=e0c28140-8d67-4033-a102-155ad81db4e4; _pubcid_cst=zix7LPQsHA%3D%3D; _au_1d=AU1D-0100-001718667612-LQHKCG03-USAL; _hjSessionUser_2585474=eyJpZCI6IjI2MzYwODdjLWQ5NzQtNWI2Yi05ZmZjLWJiN2FkMjE4YzgwNyIsImNyZWF0ZWQiOjE3MzI1NDcyODA4NTQsImV4aXN0aW5nIjp0cnVlfQ==; g_state={"i_p":1736286556611,"i_l":4}; _ga_SQ24F7Q7YW=GS1.1.1734878543.8.0.1734878547.0.0.0; _ga_K2ECMCJBFQ=GS1.1.1734878538.9.1.1734878977.0.0.0; _ga=GA1.1.2119553545.1718667549; u:location=%7B%22countryCode%22%3A%22LR%22%2C%22ccode3%22%3A%22LBR%22%2C%22timezone%22%3A%22Africa%2FMonrovia%22%2C%22ip%22%3A%2241.57.95.208%22%7D; __gads=ID=92d5d724039964be:T=1718667552:RT=1735295373:S=ALNI_MaDE1K0PYrz7DyLAYDwmlqRSaVU4w; __gpi=UID=00000e3edcb15e28:T=1718667552:RT=1735295373:S=ALNI_MbTHt_CqKudRyJHJ7GDrOBF642EAg; __eoi=ID=0dd2145e8d3f3c53:T=1734298662:RT=1735295373:S=AA-AfjZ0P-59YSEi2rEQUgujHVi-; FCNEC=%5B%5B%22AKsRol9cc7Z3YVbPlfTrFLyIlHBGYd3kq4SsKJePQb1d0v9Zpt3QewdVeda6xfrFqvKGN8Gtb8l1WEJjn4OZcxnGI2qCd-fKk0OfTmB37ExBmYfcHZSeZ4YZ68iPPRK8c4Kf-9xnGCcM4cVx1gi-fHn_6ieNYtxtog%3D%3D%22%5D%5D; panoramaId_expiry=1735381776231; cto_bundle=v0GX3V9mVkRhV0FVeUZBaFVXd3Npcm5KWkxWYVJtbEphdUMyMzB2OEJabkppVjVIdTNSV3RsZmlYa1Jyc05nJTJGRU1IcEZrTTFQUzRWZXR1NGRDTTJWOXRSdUpOYmFpR0hoS3dQRklSJTJCUWJnUiUyRmxKNHklMkZwU3FFUkRQWU5uYWRQanBNRktjb0FSbHREUVJNYmVtTnZoTkNJQWlJQSUzRCUzRA; _ga_G0V1WDW9B2=GS1.1.1735299319.90.0.1735299333.0.0.0',
-    'if-none-match': '"8dohn1chlp3qd"',
+    'cookie': '_cc_id=fd3b698f700d90530b559e2e0982d514; _pubcid=e0c28140-8d67-4033-a102-155ad81db4e4; _pubcid_cst=zix7LPQsHA%3D%3D; _au_1d=AU1D-0100-001718667612-LQHKCG03-USAL; _hjSessionUser_2585474=eyJpZCI6IjI2MzYwODdjLWQ5NzQtNWI2Yi05ZmZjLWJiN2FkMjE4YzgwNyIsImNyZWF0ZWQiOjE3MzI1NDcyODA4NTQsImV4aXN0aW5nIjp0cnVlfQ==; g_state={"i_p":1736286556611,"i_l":4}; _ga=GA1.1.2119553545.1718667549; _ga_SQ24F7Q7YW=GS1.1.1736535147.9.0.1736535167.0.0.0; _ga_K2ECMCJBFQ=GS1.1.1736535145.10.0.1736535167.0.0.0; u:location=%7B%22countryCode%22%3A%22LR%22%2C%22ccode3%22%3A%22LBR%22%2C%22timezone%22%3A%22Africa%2FMonrovia%22%2C%22ip%22%3A%2241.57.95.247%22%7D; _hjSession_2585474=eyJpZCI6IjE3OWQxZmYwLTIxNTEtNGJkZC04NzAyLWM4OWM4NDQxMjRlNiIsImMiOjE3MzY2MjQ5ODU3NTQsInMiOjAsInIiOjAsInNiIjowLCJzciI6MCwic2UiOjAsImZzIjowLCJzcCI6MH0=; __gads=ID=92d5d724039964be:T=1718667552:RT=1736624995:S=ALNI_MaDE1K0PYrz7DyLAYDwmlqRSaVU4w; __gpi=UID=00000e3edcb15e28:T=1718667552:RT=1736624995:S=ALNI_MbTHt_CqKudRyJHJ7GDrOBF642EAg; __eoi=ID=0dd2145e8d3f3c53:T=1734298662:RT=1736624995:S=AA-AfjZ0P-59YSEi2rEQUgujHVi-; panoramaId_expiry=1736711397536; cto_bundle=MyibLF9mVkRhV0FVeUZBaFVXd3Npcm5KWkxkQ0M4ak0lMkZiZzBCdTJyVlh2bmdkTEMzJTJGa0k3JTJCaW5JJTJGU2JoVWpQcmZlZjBmSmJNTXZOMExOcENSbnBXUzlJVncxRDVyMmRHUkJ3bkdRaVFlOHVxZHdQQ2dmV2dnT1pNZ0FOJTJCVU1zYjdZOXdaUGklMkZmNXd0JTJGbXdITUtmdk5XSEdJQSUzRCUzRA; FCNEC=%5B%5B%22AKsRol99cACRpS7uLflu1hMAcInPZCYVUAnVy7EAeLmUUXB-ZdsBKhsyCLPUfO02xaPjDrSQx64R8uabzgjVa26sy5frvdHfUJfH-zV7KPfCPTVewc_LtN-ZBErsUrBXJfX90eZuVj2lsSKCDYAYF_-jfV2UpLfYAA%3D%3D%22%5D%5D; _ga_G0V1WDW9B2=GS1.1.1736624986.105.1.1736625084.0.0.0',
     'priority': 'u=1, i',
-    'referer': 'https://www.fotmob.com/matches/man-city-vs-everton/2fauom',
+    'referer': 'https://www.fotmob.com/matches/girona-vs-deportivo-alaves/2k79ez',
     'sec-fetch-dest': 'empty',
     'sec-fetch-mode': 'cors',
     'sec-fetch-site': 'same-origin',
@@ -186,7 +187,7 @@ const response = await axios.get('https://www.fotmob.com/api/ltc', {
 
 
             res.json(response.data)
-            console.log(response.data)
+            
             
 
   }

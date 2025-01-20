@@ -151,7 +151,7 @@ async function fetchData() {
 
 
         processChanges(changes);
-        processNews(news_data_change)
+        processNews(news_data_new)
         previousData = newData;  // Update previousData
 
 

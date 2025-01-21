@@ -125,7 +125,7 @@ async function processNews(data){
                     title = ` ${item.title}. \n more news👉 www.sportsupd.com`
                 }
                 console.log(title, item.imageUrl)
-                publishPhotoPost(title, item.imageUrl)
+              //  publishPhotoPost(title, item.imageUrl)
                 send_news(title, item.page.url, item.imageUrl)
         })
 }

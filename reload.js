@@ -72,20 +72,26 @@ async function news_fetch(){
   }
 });
 
-return(response.data)
+return response.data
 
 
 }
 
 async function news_change(latestNews, oldNews) {
-    const oldIds = new Set(oldNews.map(item => item.id));
-    return latestNews.filter(item => !oldIds.has(item.id));
+    var filterer = []
+const difference = latestNews.filter(item1 => 
+  !oldNews.some(item2 => item2.id === item1.id)
+);
+
+console.log(difference, "found");
+
+
+
+return filterer
 }
 
 
-const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN
-const PAGE_ID = process.env.PAGE_ID;
-console.log(PAGE_ID, PAGE_ACCESS_TOKEN)
+
 async function publishPhotoPost( message, photoUrl) {
 
   try {
@@ -125,7 +131,7 @@ async function processNews(data){
                     title = ` ${item.title}. \n more news👉 www.sportsupd.com`
                 }
                 console.log(title, item.imageUrl)
-              //  publishPhotoPost(title, item.imageUrl)
+               publishPhotoPost(title, item.imageUrl)
                 send_news(title, item.page.url, item.imageUrl)
         })
 }
@@ -170,7 +176,7 @@ async function fetchDat() {
     } catch (error) {
         console.error('Error fetching data:', error);
     } finally {
-        setTimeout(fetchDat, 15000);  // Fetch data again after 10 seconds
+        setTimeout(fetchDat, 30000);  // Fetch data again after 10 seconds
     }
 }
 fetchDat()
@@ -270,7 +276,7 @@ function processChanges(changes) {
 async function send_notification(message) {
 
       const changed = JSON.parse(message.match)
-      console.log(changed.id)
+    
                 async function final_sender(token, title, body) {
    const message = {
   notification: {
@@ -306,7 +312,7 @@ async function send_notification(message) {
 async function publishTextOrLinkPost( message) {
 
     var info = `⚽🔔${message} \n  check stats👉 www.sportsupd.com`
-
+    console.log(info)
 
   try {
           const data = await model_schema.find()
@@ -344,19 +350,19 @@ async function match_update(datam){
     const change = JSON.parse(message.match)
      switch (message.type) {
             case 'start':
-                match_update(`Match Started: ${change.home.name} vs ${change.away.name}`);
+                match_update(`Match Started: \n ${change.home.name} vs ${change.away.name}`);
 
 
                 break;
             case 'end':
-                match_update(`Match Ended: ${change.home.name} ${change.home.score} - ${change.away.score} ${change.away.name}`);
+                match_update(`Match Ended: \n ${change.home.name} ${change.home.score} - ${change.away.score} ${change.away.name}`);
                 break;
             case 'goal':
-                match_update(`Goal! ${change.home.name} ${change.home.score} - ${change.away.score} ${change.away.name}.`);
+                match_update(`Goal!\n  ${change.home.name} ${change.home.score} - ${change.away.score} ${change.away.name}.`);
                 break;
 
               case 'HT':
-               match_update(`HalfTime! ${change.home.name} ${change.home.score} - ${change.away.score} ${change.away.name}.`);
+               match_update(`HalfTime! \n ${change.home.name} ${change.home.score} - ${change.away.score} ${change.away.name}.`);
                 break;
 
             case 'Second_Half':

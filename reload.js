@@ -12,15 +12,15 @@ async  function send_news(title, link, img){
 
     id.map((item)=>{
 
-async function doom() {
+async function doom(titlem, linkm, imgm) {
       const message = {
   notification: {
-    title: "Sportsup",  // Title of the notification
-    body: "Check out highlights, Teams of the Week, latest news and Live action via sportsup ",  // Body content of the notification
+    title: titlem,  // Title of the notification
+    body: titlem,  // Body content of the notification
   },
   webpush: {
     fcmOptions: {
-      link: "https://www.sportsupd.com/"  // The link the user will be redirected to when clicking the notification
+      link: linkm  // The link the user will be redirected to when clicking the notification
     },
   },
   token: item.phone_string,  // The FCM registration token of the device
@@ -37,11 +37,7 @@ async function doom() {
     // body...
 }
 
-
-console.log(item.phone_string)
-
-    
-doom()
+doom(title, link, img)
 
 
 
@@ -81,27 +77,22 @@ return(response.data)
 
 }
 
-async function news_change(latest, old){
-
-    var filterer
-
-    latest.forEach((element)=>{
-        filterer =  old.filter(item=> element.id != item.id)
-       console.log(filterer, "New News")
-
-    })
-
-    return filterer
+async function news_change(latestNews, oldNews) {
+    const oldIds = new Set(oldNews.map(item => item.id));
+    return latestNews.filter(item => !oldIds.has(item.id));
 }
 
 
 const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN
 const PAGE_ID = process.env.PAGE_ID;
-
+console.log(PAGE_ID, PAGE_ACCESS_TOKEN)
 async function publishPhotoPost( message, photoUrl) {
+
   try {
+        const data = await model_schema.find()
+        console.log(data[0]["id"])
     const response = await axios.post(
-      `https://graph.facebook.com/v21.0/${PAGE_ID}/photos`,
+      `https://graph.facebook.com/v21.0/${data[0]["id"]}/photos`,
       {
         message: message,
         url: photoUrl,
@@ -109,7 +100,7 @@ async function publishPhotoPost( message, photoUrl) {
       {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${PAGE_ACCESS_TOKEN}`,
+          Authorization: `Bearer ${data[0]["token"]}`,
         },
       }
     );
@@ -123,14 +114,15 @@ async function publishPhotoPost( message, photoUrl) {
 
 async function processNews(data){
 
+      console.log(data, "data")
         data.map((item)=>{
                 var title 
 
                 if(item.lead){
-                    title = ` *${item.title}.* \n {item.lead} \n more news👉 www.sportsupd.com`
+                    title = ` ${item.title}. \n ${item.lead} \n more news👉 www.sportsupd.com`
                 }
                 else{
-                    title = ` *${item.title}.* \n more news👉 www.sportsupd.com`
+                    title = ` ${item.title}. \n more news👉 www.sportsupd.com`
                 }
                 console.log(title, item.imageUrl)
                 publishPhotoPost(title, item.imageUrl)
@@ -146,14 +138,13 @@ async function fetchData() {
         const newData = await fetchMatches(formattedDate);
         const changes = findChanges(previousData, newData);
 
-        const news_data_new = await news_fetch()
-        const news_data_change = await news_change(news_data_new, previousnews)
+       
 
 
         processChanges(changes);
-        processNews(news_data_new)
+       
         previousData = newData;  // Update previousData
-
+       
 
     } catch (error) {
         console.error('Error fetching data:', error);
@@ -164,6 +155,25 @@ async function fetchData() {
 
 
 
+async function fetchDat() {
+    try {
+       
+
+        const news_data_new = await news_fetch()
+        const news_data_change = await news_change(news_data_new, previousnews)
+
+
+        processNews(news_data_change)
+   
+        previousnews = news_data_new
+
+    } catch (error) {
+        console.error('Error fetching data:', error);
+    } finally {
+        setTimeout(fetchDat, 15000);  // Fetch data again after 10 seconds
+    }
+}
+fetchDat()
 function getFormattedDate() {
     const date = new Date();
     return `${date.getFullYear()}${String(date.getMonth() + 1).padStart(2, '0')}${String(date.getDate()).padStart(2, '0')}`;
@@ -293,15 +303,16 @@ async function send_notification(message) {
     
 
 
-
 async function publishTextOrLinkPost( message) {
 
-    var info = `⚽🔔${message} \n check stats👉 www.sportsupd.com`
+    var info = `⚽🔔${message} \n  check stats👉 www.sportsupd.com`
 
 
   try {
+          const data = await model_schema.find()
+          console.log(data[0]["id"])
     const response = await axios.post(`
-      https://graph.facebook.com/v21.0/${PAGE_ID}/feed`,
+      https://graph.facebook.com/v21.0/${data[0]["id"]}/feed`,
       {
         message: info,
         published: true,
@@ -309,7 +320,7 @@ async function publishTextOrLinkPost( message) {
       {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${PAGE_ACCESS_TOKEN}`,
+          Authorization: `Bearer ${data[0]["token"]}`,
         },
       }
     );

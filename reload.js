@@ -29,7 +29,7 @@ async function doom(titlem, linkm, imgm) {
     try {
         const response = await admin.messaging().send(message);
           } catch (error) {
-        console.error('Error sending message:', error);
+
     }
 
 
@@ -299,7 +299,7 @@ async function send_notification(message) {
         const response = await admin.messaging().send(message);
    
     } catch (error) {
-        console.error('Error sending message:', error);
+
     }
 
 

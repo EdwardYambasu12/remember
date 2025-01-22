@@ -71,7 +71,7 @@ async function news_fetch(){
   }
 });
 
-return response.data
+return response.data.slice(0, 3)
 
 
 }
@@ -154,7 +154,7 @@ async function fetchData() {
     } catch (error) {
         console.error('Error fetching data:', error);
     } finally {
-        setTimeout(fetchData, 10000);  // Fetch data again after 10 seconds
+        setTimeout(fetchData, 5000);  // Fetch data again after 10 seconds
     }
 }
 

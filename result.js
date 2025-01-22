@@ -49,7 +49,7 @@ result.get("/result", async(req, res)=>{
        const data = await model_schema.find()
 
 	const id = req.query.id
-	console.log(id)
+
 	  const response = await axios.get('https://www.fotmob.com/api/matchDetails', {
   params: {
     'matchId': id.id
@@ -112,7 +112,6 @@ result.get("/match_news",  async(req, res)=>{
 
   const data = await model_schema.find()
 
-  console.log(req.query.id, "News Id")
   const response = await axios.get('https://www.fotmob.com/api/matchNews', {
   params: {
     'id': req.query.id,
@@ -159,10 +158,9 @@ result.get("/commentary", async(req, res)=>{
             inc = data.arr[1]
           }
          
-        console.log(inc)
+     
 
-        console.log(stringy)
-
+      
         
 
 const response = await axios.get('https://www.fotmob.com/api/ltc', {
@@ -201,8 +199,8 @@ result.get("/audio_commentary", async(req, res)=>{
 
   const {id} = req.query
 
- 
-  console.log(id, "this is the id for audio")
+
+
 
   const response = await axios.get('https://www.fotmob.com/api/audio-live-stream', {
   params: {

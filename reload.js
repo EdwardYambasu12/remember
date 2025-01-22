@@ -28,8 +28,7 @@ async function doom(titlem, linkm, imgm) {
  
     try {
         const response = await admin.messaging().send(message);
-        console.log('Successfully sent message:', response);
-    } catch (error) {
+          } catch (error) {
         console.error('Error sending message:', error);
     }
 
@@ -83,7 +82,7 @@ const difference = latestNews.filter(item1 =>
   !oldNews.some(item2 => item2.id === item1.id)
 );
 
-console.log(difference, "found");
+
 
 
 
@@ -96,7 +95,7 @@ async function publishPhotoPost( message, photoUrl) {
 
   try {
         const data = await model_schema.find()
-        console.log(data[0]["id"])
+      
     const response = await axios.post(
       `https://graph.facebook.com/v21.0/${data[0]["id"]}/photos`,
       {
@@ -110,7 +109,7 @@ async function publishPhotoPost( message, photoUrl) {
         },
       }
     );
-    console.log("Photo post published successfully:", response.data);
+
     return response.data.id;
   } catch (error) {
     console.error("Error publishing photo post:", error.message);
@@ -120,7 +119,7 @@ async function publishPhotoPost( message, photoUrl) {
 
 async function processNews(data){
 
-      console.log(data, "data")
+     
         data.map((item)=>{
                 var title 
 
@@ -130,7 +129,7 @@ async function processNews(data){
                 else{
                     title = ` ${item.title}. \n more news👉 www.sportsupd.com`
                 }
-                console.log(title, item.imageUrl)
+              
                publishPhotoPost(title, item.imageUrl)
                 send_news(title, item.page.url, item.imageUrl)
         })
@@ -176,7 +175,7 @@ async function fetchDat() {
     } catch (error) {
         console.error('Error fetching data:', error);
     } finally {
-        setTimeout(fetchDat, 30000);  // Fetch data again after 10 seconds
+        setTimeout(fetchDat, 180000);  // Fetch data again after 10 seconds
     }
 }
 fetchDat()
@@ -298,7 +297,7 @@ async function send_notification(message) {
 
     try {
         const response = await admin.messaging().send(message);
-        console.log('Successfully sent message:', response);
+   
     } catch (error) {
         console.error('Error sending message:', error);
     }
@@ -312,11 +311,10 @@ async function send_notification(message) {
 async function publishTextOrLinkPost( message) {
 
     var info = `⚽🔔${message} \n  check stats👉 www.sportsupd.com`
-    console.log(info)
-
+    
   try {
           const data = await model_schema.find()
-          console.log(data[0]["id"])
+         
     const response = await axios.post(`
       https://graph.facebook.com/v21.0/${data[0]["id"]}/feed`,
       {
@@ -397,7 +395,7 @@ async function match_update(datam){
 
             
              if (notify) {
-                console.log("found for notification", user.phone_string);
+        
                  switch (message.type) {
             case 'start':
                 final_sender(user.phone_string, "Match Started", `Match Started: ${change.home.name} vs ${change.away.name}`);

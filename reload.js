@@ -22,6 +22,10 @@ async function doom(titlem, linkm, imgm) {
     fcmOptions: {
       link: linkm  // The link the user will be redirected to when clicking the notification
     },
+     notification: {
+      icon: imgm, // Optional icon for the notification
+      sound: "/sounds/example_sound.mp3", // Path to the custom notification sound
+    },
   },
   token: item.phone_string,  // The FCM registration token of the device
 };
@@ -343,11 +347,21 @@ async function match_update(datam){
 
 
 }
+var main_ids = [ 
+         id: 87,
+        id: 55,
+        id: 53, 
+        id: 54, 
+        id: 47, 
+        id: 42, 
+    ]
 
 
     const change = JSON.parse(message.match)
      switch (message.type) {
             case 'start':
+
+
                 match_update(`Match Started: \n ${change.home.name} vs ${change.away.name}`);
 
 
@@ -355,8 +369,13 @@ async function match_update(datam){
             case 'end':
                 match_update(`Match Ended: \n ${change.home.name} ${change.home.score} - ${change.away.score} ${change.away.name}`);
                 break;
+
+
             case 'goal':
+
+                if(main_ids.includes(change.leagueId)){
                 match_update(`Goal!\n  ${change.home.name} ${change.home.score} - ${change.away.score} ${change.away.name}.`);
+            }
                 break;
 
               case 'HT':

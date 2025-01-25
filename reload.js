@@ -20,7 +20,7 @@ async function doom(titlem, linkm, imgm) {
   },
   webpush: {
     fcmOptions: {
-      link: linkm  // The link the user will be redirected to when clicking the notification
+      link: "www.sportsupd.com/news"  // The link the user will be redirected to when clicking the notification
     },
      notification: {
       icon: imgm, // Optional icon for the notification
@@ -289,13 +289,15 @@ async function send_notification(message) {
   token: token, // The FCM registration token of the device
   webpush: {
     fcm_options: {
-      link: "https://sportsupd.com/result/" + changed.id, // The link to open when the notification is clicked
+      link: `https://sportsupd.com/result/"${changed.id}`, // The link to open when the notification is clicked
     },
     notification: {
-      icon: "https://www.sportsupd.com/src/images/icon.jpg", // Optional icon for the notification
+      icon: "https://images.fotmob.com/image_resources/logo/leaguelogo/"+changed.leagueId+".png", // Optional icon for the notification
       sound: "/sounds/example_sound.mp3", // Path to the custom notification sound
     },
   },
+
+
 };
 
 
@@ -348,12 +350,12 @@ async function match_update(datam){
 
 }
 var main_ids = [ 
-         id: 87,
-        id: 55,
-        id: 53, 
-        id: 54, 
-        id: 47, 
-        id: 42, 
+          87,
+        55,
+        53, 
+        54, 
+        47, 
+        42, 
     ]
 
 
@@ -375,6 +377,9 @@ var main_ids = [
 
                 if(main_ids.includes(change.leagueId)){
                 match_update(`Goal!\n  ${change.home.name} ${change.home.score} - ${change.away.score} ${change.away.name}.`);
+            }
+            else{
+                console.log("not found for posting")
             }
                 break;
 

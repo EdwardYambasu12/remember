@@ -287,15 +287,15 @@ async function send_notification(message) {
     body: body,
   },
   token: token, // The FCM registration token of the device
-  webpush: {
-    fcm_options: {
-      link: `https://sportsupd.com/result/"${changed.id}`, // The link to open when the notification is clicked
-    },
-    notification: {
-      icon: "https://images.fotmob.com/image_resources/logo/leaguelogo/"+changed.leagueId+".png", // Optional icon for the notification
-      sound: "/sounds/example_sound.mp3", // Path to the custom notification sound
-    },
+ webpush: {
+  fcm_options: {
+    link: `https://sportsupd.com/result/${changed.id}`, // Corrected link format
   },
+  notification: {
+    icon: `https://images.fotmob.com/image_resources/logo/leaguelogo/${changed.leagueId}.png`, // Updated icon URL
+    sound: "/sounds/example_sound.mp3", // Path to the custom notification sound
+  },
+},
 
 
 };

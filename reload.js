@@ -20,7 +20,7 @@ async function doom(titlem, linkm, imgm) {
   },
   webpush: {
     fcmOptions: {
-      link: "www.sportsupd.com/news"  // The link the user will be redirected to when clicking the notification
+      link: "www.lonescore.com/news"  // The link the user will be redirected to when clicking the notification
     },
      notification: {
       icon: imgm, // Optional icon for the notification
@@ -128,10 +128,10 @@ async function processNews(data){
                 var title 
 
                 if(item.lead){
-                    title = ` ${item.title}. \n ${item.lead} \n more news👉 www.sportsupd.com`
+                    title = ` ${item.title}. \n ${item.lead} \n more news👉 www.lonescore.com`
                 }
                 else{
-                    title = ` ${item.title}. \n more news👉 www.sportsupd.com`
+                    title = ` ${item.title}. \n more news👉 www.lonescore.com`
                 }
               
                publishPhotoPost(title, item.imageUrl)
@@ -289,7 +289,7 @@ async function send_notification(message) {
   token: token, // The FCM registration token of the device
  webpush: {
   fcm_options: {
-    link: `https://sportsupd.com/result/${changed.id}`, // Corrected link format
+    link: `https://lonescore.com/result/${changed.id}`, // Corrected link format
   },
   notification: {
     icon: `https://images.fotmob.com/image_resources/logo/leaguelogo/${changed.leagueId}.png`, // Updated icon URL
@@ -316,7 +316,7 @@ async function send_notification(message) {
 
 async function publishTextOrLinkPost( message) {
 
-    var info = `⚽🔔${message} \n  check stats👉 www.sportsupd.com`
+    var info = `⚽🔔${message} \n  check stats👉 www.lonescore.com`
     
   try {
           const data = await model_schema.find()

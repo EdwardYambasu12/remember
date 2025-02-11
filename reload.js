@@ -99,8 +99,8 @@ async function publishPhotoPost( message, photoUrl) {
 
   try {
         const data = await model_schema.find()
-      
-    const response = await axios.post(
+     
+    const response = await axios.post(  
       `https://graph.facebook.com/v21.0/${data[0]["id"]}/photos`,
       {
         message: message,
@@ -374,13 +374,17 @@ var main_ids = [
 
 
             case 'goal':
+                main_ids.map((item)=>{
+                    if(change.leagueId == item){
+                         match_update(`Goal!\n  ${change.home.name} ${change.home.score} - ${change.away.score} ${change.away.name}.`);
+                    }
+                    else{
+                        console.log("not posting because Item not available")
+                    }
 
-                if(main_ids.includes(change.leagueId)){
-                match_update(`Goal!\n  ${change.home.name} ${change.home.score} - ${change.away.score} ${change.away.name}.`);
-            }
-            else{
-                console.log("not found for posting")
-            }
+
+                })
+              
                 break;
 
               case 'HT':

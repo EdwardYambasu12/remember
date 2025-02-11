@@ -375,7 +375,7 @@ var main_ids = [
 
             case 'goal':
                 main_ids.map((item)=>{
-                    if(change.leagueId == item){
+                    if(change.parentLeagueId == item){
                          match_update(`Goal!\n  ${change.home.name} ${change.home.score} - ${change.away.score} ${change.away.name}.`);
                     }
                     else{

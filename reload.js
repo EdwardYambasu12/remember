@@ -213,10 +213,18 @@ async function fetchMatches(date) {
   }
 });
 
-    return res.data.leagues.flatMap(league => league.matches);
+    const matches = res.data.leagues.flatMap(league =>
+  league.matches.map(match => ({
+    ...match,
+    parentId: league.parentLeagueId
+  }))
+);
+
+    return(matches)
 }
  
 async function findChanges(previousData, newData) {
+
     // Ensure changes is an array
  const changes = [];
     for (const newItem of newData) {
@@ -375,7 +383,7 @@ var main_ids = [
 
             case 'goal':
                 main_ids.map((item)=>{
-                    if(change.parentLeagueId == item){
+                    if(change.parentId == item){
                          match_update(`Goal!\n  ${change.home.name} ${change.home.score} - ${change.away.score} ${change.away.name}.`);
                     }
                     else{

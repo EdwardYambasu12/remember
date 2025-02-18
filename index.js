@@ -8,7 +8,7 @@ const search = require("./search.js")
 const app = express()
 const axios = require("axios")
 
-const reloader = require("./reload.js")
+//const reloader = require("./reload.js")
 
 const matches = require("./get_matches.js")
 const result = require("./result.js")
@@ -73,10 +73,81 @@ function relay(){
 }
 
 
+app.get("/animation", async(req, res)=>{
+  const response = await axios.post(
+  'https://api.holasports.com/gateway/match/matchLiveAnimation',
+  {
+    'channel': 'PC',
+    'country': 'US',
+    'deviceId': '3ec14d60-e651-44cb-95de-4893a10674a3',
+    'deviceToken': '',
+    'lang': 'EN',
+    'notifyPlate': 'YM',
+    'param': req.query.id,
+    'plateForm': 3,
+    'st': 1739906822498,
+    'timeZone': 'GMT-0',
+    'version': 1
+  },
+  {
+    headers: {
+      'accept-language': 'en-US,en;q=0.9',
+      'origin': 'https://holasports.com',
+      'priority': 'u=1, i',
+      'referer': 'https://holasports.com/',
+      'sec-ch-ua': '"Not(A:Brand";v="99", "Microsoft Edge";v="133", "Chromium";v="133"',
+      'sec-ch-ua-mobile': '?0',
+      'sec-ch-ua-platform': '"Windows"',
+      'sec-fetch-dest': 'empty',
+      'sec-fetch-mode': 'cors',
+      'sec-fetch-site': 'same-site',
+      'sign': 'ba56f049fd3325e7cfdc65316f22f1e3',
+      'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36 Edg/133.0.0.0'
+    }
+  }
+);
 
 
+res.json(response.data)
+})
 
+app.get("/get_video_data", async(req, res)=>{
 
+const response = await axios.post(
+  'https://api.holasports.com/gateway/live/broadcast/period/queryHotMatchList',
+  {
+    'channel': 'PC',
+    'country': 'US',
+    'deviceId': '3ec14d60-e651-44cb-95de-4893a10674a3',
+    'deviceToken': '',
+    'lang': 'EN',
+    'notifyPlate': 'YM',
+    'param': {},
+    'plateForm': 3,
+    'st': 1739906721044,
+    'timeZone': 'GMT-0',
+    'version': 1
+  },
+  {
+    headers: {
+      'accept-language': 'en-US,en;q=0.9',
+      'origin': 'https://holasports.com',
+      'priority': 'u=1, i',
+      'referer': 'https://holasports.com/',
+      'sec-ch-ua': '"Not(A:Brand";v="99", "Microsoft Edge";v="133", "Chromium";v="133"',
+      'sec-ch-ua-mobile': '?0',
+      'sec-ch-ua-platform': '"Windows"',
+      'sec-fetch-dest': 'empty',
+      'sec-fetch-mode': 'cors',
+      'sec-fetch-site': 'same-site',
+      'sign': 'af07903ae6baf46986a7470227093771',
+      'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36 Edg/133.0.0.0'
+    }
+  }
+);
+
+res.json(response.data)
+})
 
 
 relay()

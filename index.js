@@ -8,7 +8,6 @@ const search = require("./search.js")
 const app = express()
 const axios = require("axios")
 
-const reloader = require("./reload.js")
 
 const matches = require("./get_matches.js")
 const result = require("./result.js")

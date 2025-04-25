@@ -358,12 +358,7 @@ async function match_update(datam){
 
 }
 var main_ids = [ 
-          87,
-        55,
-        53, 
-        54, 
-        47, 
-        42, 
+     
     ]
 
 

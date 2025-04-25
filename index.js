@@ -8,7 +8,9 @@ const search = require("./search.js")
 const app = express()
 const axios = require("axios")
 
+
 const reloader = require("./reload.js")
+
 
 const matches = require("./get_matches.js")
 const result = require("./result.js")
@@ -114,34 +116,25 @@ res.json(response.data)
 app.get("/get_video_data", async(req, res)=>{
 
 const response = await axios.post(
-  'https://api.holasports.com/gateway/live/broadcast/period/queryHotMatchList',
+  'https://api.holasports.com/gateway/match/period/queryHotMatchList',
   {
     'channel': 'PC',
     'country': 'US',
-    'deviceId': '3ec14d60-e651-44cb-95de-4893a10674a3',
+    'deviceId': '21061479-df27-4a97-8649-53224eb0a8a2',
     'deviceToken': '',
     'lang': 'EN',
     'notifyPlate': 'YM',
     'param': {},
     'plateForm': 3,
-    'st': 1739906721044,
+    'st': 1743543492107,
     'timeZone': 'GMT-0',
     'version': 1
   },
   {
     headers: {
-      'accept-language': 'en-US,en;q=0.9',
-      'origin': 'https://holasports.com',
-      'priority': 'u=1, i',
-      'referer': 'https://holasports.com/',
-      'sec-ch-ua': '"Not(A:Brand";v="99", "Microsoft Edge";v="133", "Chromium";v="133"',
-      'sec-ch-ua-mobile': '?0',
-      'sec-ch-ua-platform': '"Windows"',
-      'sec-fetch-dest': 'empty',
-      'sec-fetch-mode': 'cors',
-      'sec-fetch-site': 'same-site',
-      'sign': 'af07903ae6baf46986a7470227093771',
-      'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36 Edg/133.0.0.0'
+      'sign': '8c0201d641b4e47f38db0be8a8e9e6ff',
+      'User-Agent': 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Mobile Safari/537.36',
+      'Referer': 'https://holasports.com/en'
     }
   }
 );

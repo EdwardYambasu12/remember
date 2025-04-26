@@ -81,35 +81,30 @@ app.get("/animation", async(req, res)=>{
   {
     'channel': 'PC',
     'country': 'US',
-    'deviceId': '3ec14d60-e651-44cb-95de-4893a10674a3',
+    'deviceId': '4bfbddcc-ce96-4185-b835-b95ed119ef27',
     'deviceToken': '',
     'lang': 'EN',
     'notifyPlate': 'YM',
     'param': req.query.id,
     'plateForm': 3,
-    'st': 1739906822498,
+    'st': 1745670425161,
     'timeZone': 'GMT-0',
     'version': 1
   },
   {
     headers: {
-      'accept-language': 'en-US,en;q=0.9',
+      'accept-language': 'en-US,en;q=0.9,fr;q=0.8',
       'origin': 'https://holasports.com',
       'priority': 'u=1, i',
       'referer': 'https://holasports.com/',
-      'sec-ch-ua': '"Not(A:Brand";v="99", "Microsoft Edge";v="133", "Chromium";v="133"',
-      'sec-ch-ua-mobile': '?0',
-      'sec-ch-ua-platform': '"Windows"',
       'sec-fetch-dest': 'empty',
       'sec-fetch-mode': 'cors',
       'sec-fetch-site': 'same-site',
-      'sign': 'ba56f049fd3325e7cfdc65316f22f1e3',
-      'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36 Edg/133.0.0.0'
+      'sign': 'ef339b4333162f89246cbf35f62a3c2b',
+      'user-agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1'
     }
   }
 );
-
-
 res.json(response.data)
 })
 

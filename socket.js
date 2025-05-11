@@ -1,36 +1,34 @@
+const { Server } = require("socket.io");
+const lets_return = require("./matchs_reload");
 
-const {Server} = require("socket.io")
-const lets_return = require("./matchs_reload")
+let io;
 
-let io
-async function io_connect(server){
-	io = new Server(server, {
-		cors : {
-			origin : "https://www.lonescore.com"
-		}
-	})
+async function io_connect(server) {
+  io = new Server(server, {
+    cors: {
+      origin: [
+        "http://localhost:3000",
+        "https://www.lonescore.com"
+      ],
+      credentials: true
+    }
+  });
 
+  io.on("connection", async (socket) => {
+    console.log("Client connected:", socket.id);
 
-	io.on("connection", async(socket)=>{
-	
+    socket.on("promise_keeper", (data) => {
+      console.log(data);
+    });
 
-		
+    socket.emit("God_thank_you", { message: "You are a promise Keeper" });
+  });
 
-		
-
-
-			socket.on("promise_keeper", (data)=>{
-				console.log(data)
-			})
-				const data = await lets_return()
-
-				setTimeout(
-
-			socket.emit("Main_data", data), 3000)
-
-
-			socket.emit("God_thank_you", {message : "You are a promise Keeper"})
-	})
+  // Emit `lets_return()` data to all connected clients every 3 seconds
+  setInterval(async () => {
+    const data = await lets_return();
+    io.emit("Main_data", data); // Emits to all connected clients
+  }, 3000);
 }
 
-module.exports = io_connect
+module.exports = io_connect;

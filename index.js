@@ -7,9 +7,18 @@ const news = require("./news.js")
 const search = require("./search.js")
 const app = express()
 const axios = require("axios")
+const http = require("http")
+require("./matchs_reload.js")
+const server = http.createServer(app)
+const io = require("./socket.js")
 
+ io(server)
 
 //const reloader = require("./reload.js")
+
+
+
+
 
 
 const matches = require("./get_matches.js")
@@ -140,6 +149,9 @@ res.json(response.data)
 
 relay()
 
-app.listen(5000, ()=>{
+server.listen(5000, ()=>{
 	console.log("server is loading on port 5000")
 })
+
+
+module.exports = server

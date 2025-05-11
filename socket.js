@@ -6,7 +6,7 @@ let io
 async function io_connect(server){
 	io = new Server(server, {
 		cors : {
-			origin : "https://www.lonescore.com/"
+			origin : "https://www.lonescore.com"
 		}
 	})
 

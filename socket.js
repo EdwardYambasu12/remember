@@ -24,7 +24,9 @@ async function io_connect(server){
 			})
 				const data = await lets_return()
 
-			socket.emit("Main_data", data)
+				setTimeout(
+
+			socket.emit("Main_data", data), 3000)
 
 
 			socket.emit("God_thank_you", {message : "You are a promise Keeper"})

@@ -85,18 +85,18 @@ function relay(){
 
 
 app.get("/animation", async(req, res)=>{
-  const response = await axios.post(
+ const response = await axios.post(
   'https://api.holasports.com/gateway/match/matchLiveAnimation',
   {
     'channel': 'PC',
     'country': 'US',
-    'deviceId': '4bfbddcc-ce96-4185-b835-b95ed119ef27',
+    'deviceId': '735b223c-5ce2-42a0-be10-894255dcdc0e',
     'deviceToken': '',
     'lang': 'EN',
     'notifyPlate': 'YM',
-    'param': req.query.id,
+    'param': '1918624',
     'plateForm': 3,
-    'st': 1745670425161,
+    'st': 1748240603685,
     'timeZone': 'GMT-0',
     'version': 1
   },
@@ -109,7 +109,7 @@ app.get("/animation", async(req, res)=>{
       'sec-fetch-dest': 'empty',
       'sec-fetch-mode': 'cors',
       'sec-fetch-site': 'same-site',
-      'sign': 'ef339b4333162f89246cbf35f62a3c2b',
+      'sign': '8df4039e61b1e91960e71635d97e0584',
       'user-agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1'
     }
   }

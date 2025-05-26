@@ -94,7 +94,7 @@ app.get("/animation", async(req, res)=>{
     'deviceToken': '',
     'lang': 'EN',
     'notifyPlate': 'YM',
-    'param': '1918624',
+    'param': req.query.id,
     'plateForm': 3,
     'st': 1748240603685,
     'timeZone': 'GMT-0',

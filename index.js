@@ -5,6 +5,7 @@ const cors = require("cors")
 const bodyParser = require('body-parser');
 const news = require("./news.js")
 const search = require("./search.js")
+const news_post = require("./post-news.js")
 const app = express()
 const axios = require("axios")
 const http = require("http")
@@ -38,7 +39,7 @@ app.use(bodyParser.json({ limit: '50mb' })); // Adjust the limit as needed
 
 // For URL-encoded payloads
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
-
+app.use(news_post)
 app.use(router)
 app.use(cors())
 app.use(league)
@@ -83,6 +84,11 @@ function relay(){
 	setTimeout(relay, 30000)
 }
 
+let userData = {
+  favoriteLeagues: [],
+  followedTeams: [],
+  followedPlayers: []
+};
 
 app.get("/sofa_data", async(req, res)=>{
     const response = await axios.get('https://www.sofascore.com/api/v1/sport/football/scheduled-events/2025-06-02', {

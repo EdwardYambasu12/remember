@@ -20,7 +20,7 @@ mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
 const registerSchema = new mongoose.Schema({
   email: { type: String,  },
   password: { type: String, },
-  favorite_team: [{ type: String }],
+  favorite_team: [{ type: String }],  
   favorite_player: [{ type: String }],
   favorite_league: [{ type: String }],
   pinned_matches: [{ type: String }],
@@ -78,6 +78,58 @@ router.get("/delete_all_users", async (req, res) => {
     console.error('Error deleting users:', err);
     res.status(500).json({ message: 'Error deleting users', error: err.message });
   }
+});
+
+
+router.post("/api/favorites/sync", async (req, res) => {
+     console.log(req.body, "name")
+
+  try {
+    const { userId, favoriteLeagues, favoriteTeams, favoritePlayers } = req.body;
+
+    if (!userId || !favoriteLeagues) {
+      return res.status(400).json({ message: "id_ and league_id are required." });
+    }
+
+     // Update the user's favorite leagues
+    const updateResult = await register_model.updateOne(
+      { _id: userId},
+      { $set: { favorite_league: favoriteLeagues, favorite_player : favoritePlayers, favorite_team : favoriteTeams } }
+    );
+
+    console.log("Favorite League added successfully:", updateResult);
+
+    // Fetch the updated favorite leagues from the DB
+    const updatedUser = await register_model.findById(userId, "favorite_league");
+
+    res.status(200).json({
+      success: true,
+      message: "Favorite League added successfully",
+      favoriteLeagues: updatedUser.favorite_league || [],
+    });
+  } catch (err) {
+    console.error("Error adding favorite League:", err);
+    res.status(500).json({
+      message: "Error adding favorite League",
+      error: err.message,
+    });
+  }
+});
+
+
+router.post('/api/followed-teams/sync', (req, res) => {
+  userData.followedTeams = req.body.followedTeams || [];
+  res.json({ success: true, followedTeams: userData.followedTeams });
+});
+
+router.post('/api/followed-players/sync', (req, res) => {
+  userData.followedPlayers = req.body.followedPlayers || [];
+  res.json({ success: true, followedPlayers: userData.followedPlayers });
+});
+
+// For testing: get all user data
+router.get('/api/userdata', (req, res) => {
+  res.json(userData);
 });
 
 router.post("/register", async (req, res) => {

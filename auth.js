@@ -1,99 +1,476 @@
+
 const express = require("express");
 const mongoose = require("mongoose");
 const router = express.Router();
 const cors = require("cors");
-const bodyParser = require("body-parser");
+const bodyParser = require('body-parser');
+
 
 router.use(cors());
 router.use(bodyParser.json());
 router.use(express.urlencoded({ extended: true }));
 
-// ✅ Correct DB URI with database name
-const uri = "mongodb+srv://lonescore0_db_user:S4XF9yjKDR08cs66@cluster0.ysw7fpi.mongodb.net/lonescore?retryWrites=true&w=majority&appName=Cluster0";
 
-async function connectDB() {
-  try {
-    await mongoose.connect(uri, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-      serverSelectionTimeoutMS: 10000, // 10s
-    });
-    console.log("✅ Connected to MongoDB");
-  } catch (err) {
-    console.error("❌ Cannot connect to MongoDB:", err.message);
-  }
-}
-connectDB();
 
-// ===== Schemas & Models =====
+const uri = "mongodb+srv://sportsup14:a4gM6dGvo7SHk9aX@cluster0.db0ee.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => console.log('Connected to MongoDB'))
+  .catch(err => console.error(' connect to MongoDB', err));
+
 const registerSchema = new mongoose.Schema({
-  email: String,
-  password: String,
-  favorite_team: [String],
-  favorite_player: [String],
-  favorite_league: [String],
-  pinned_matches: [String],
-  phone_string: String
+  email: { type: String,  },
+  password: { type: String, },
+  favorite_team: [{ type: String }],  
+  favorite_player: [{ type: String }],
+  favorite_league: [{ type: String }],
+  pinned_matches: [{ type: String }],
+  phone_string: { type: String }
 });
 
-const varSchema = new mongoose.Schema({
-  variable: String,
-  result_string: String,
-  comm: String,
-  m_news: String,
-  odds: String,
-  id: String,
-  token: String
-});
+const var_schema = new mongoose.Schema(
+    {
 
-const RegisterModel = mongoose.model("User", registerSchema);
-const VardModel = mongoose.model("Vard", varSchema);
+      variable : {type : String},
+      result_string : {type : String},
+      comm : {type : String},
+      m_news : {type : String},
+      odds : {type:String},
+      id: {type : String},
+      token : {type : String}
 
-// ===== Routes =====
-router.post("/vari", async (req, res) => {
-  try {
-    const { sport, resu, com, news_m, m_odds, idm, tokenm } = req.body;
+    }
+  )
 
-    await VardModel.deleteMany({});
-    console.log("✅ All Vards deleted");
+const model_schema = mongoose.model("Vard", var_schema)
 
-    const start = new VardModel({
-      variable: sport,
-      result_string: resu,
-      comm: com,
-      m_news: news_m,
+router.post("/vari", async(req, res)=>{
+
+  const {sport, resu, com, news_m, m_odds, idm, tokenm} = req.body
+console.log(sport)
+
+    const result = await model_schema .deleteMany({}); // Deletes all documents in the collection
+    console.log('All users deleted:', result);
+  const start = new model_schema({
+      variable : sport,
+      result_string : resu,
+      comm : com,
+      m_news : news_m,
       odds: m_odds,
-      id: idm,
-      token: tokenm
-    });
+      id : idm,
+      token : tokenm
+    }
+            )
+  await start.save()
 
-    await start.save();
-    res.json({ message: "New Vard saved" });
-  } catch (err) {
-    console.error("❌ Error in /vari:", err.message);
-    res.status(500).json({ error: err.message });
-  }
-});
+})
+router.get("/var", async(req, res)=>{
+  const data = await model_schema.find()
 
-router.get("/var", async (req, res) => {
+  res.json(data)
+})
+const RegisterModel = mongoose.model("User", registerSchema);
+router.get("/delete_all_users", async (req, res) => {
   try {
-    const data = await VardModel.find();
-    res.json(data);
+    const result = await register_model.deleteMany({}); // Deletes all documents in the collection
+    console.log('All users deleted:', result);
+    res.status(200).json({ message: 'All users deleted successfully', deletedCount: result.deletedCount });
   } catch (err) {
-    res.status(500).json({ error: "Failed to fetch vars" });
+    console.error('Error deleting users:', err);
+    res.status(500).json({ message: 'Error deleting users', error: err.message });
   }
 });
 
-// Example: Register user
+
+router.post("/api/favorites/sync", async (req, res) => {
+     console.log(req.body, "name")
+
+  try {
+    const { userId, favoriteLeagues, favoriteTeams, favoritePlayers } = req.body;
+
+    if (!userId || !favoriteLeagues) {
+      return res.status(400).json({ message: "id_ and league_id are required." });
+    }
+
+     // Update the user's favorite leagues
+    const updateResult = await register_model.updateOne(
+      { _id: userId},
+      { $set: { favorite_league: favoriteLeagues, favorite_player : favoritePlayers, favorite_team : favoriteTeams } }
+    );
+
+    console.log("Favorite League added successfully:", updateResult);
+
+    // Fetch the updated favorite leagues from the DB
+    const updatedUser = await register_model.findById(userId, "favorite_league");
+
+    res.status(200).json({
+      success: true,
+      message: "Favorite League added successfully",
+      favoriteLeagues: updatedUser.favorite_league || [],
+    });
+  } catch (err) {
+    console.error("Error adding favorite League:", err);
+    res.status(500).json({
+      message: "Error adding favorite League",
+      error: err.message,
+    });
+  }
+});
+
+
+router.post('/api/followed-teams/sync', (req, res) => {
+  userData.followedTeams = req.body.followedTeams || [];
+  res.json({ success: true, followedTeams: userData.followedTeams });
+});
+
+router.post('/api/followed-players/sync', (req, res) => {
+  userData.followedPlayers = req.body.followedPlayers || [];
+  res.json({ success: true, followedPlayers: userData.followedPlayers });
+});
+
+// For testing: get all user data
+router.get('/api/userdata', (req, res) => {
+  res.json(userData);
+});
+
 router.post("/register", async (req, res) => {
   try {
+    console.log(req.body);
     const { email, password, phone_string } = req.body;
+
     const user = new RegisterModel({ email, password, phone_string });
     await user.save();
     res.status(201).json({ message: "User registered successfully." });
-  } catch (err) {
-    res.status(500).json({ message: "Registration failed.", error: err.message });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ message: "Registration failed.", error: e.message });
   }
 });
 
-module.exports = { router, RegisterModel, VardModel };
+var register_model = RegisterModel
+
+
+
+router.get("/users", (req, res)=>{
+  async function reloader(){
+      const month = await register_model.find()
+      res.json(month)
+  }
+
+  reloader()
+})
+
+router.post("/update_token", async (req, res) => {
+    const { id_, token } = req.body;
+
+    if (!id_ || !token) {
+        return res.status(400).json({ message: "User ID and token are required." });
+    }
+
+    try {
+        const updatedUser = await register_model.findByIdAndUpdate(
+            id_,
+            { phone_string: token },
+            { new: true, runValidators: true } // Options: return the updated document and run validators
+        );
+
+        if (!updatedUser) {
+            console.log({ message: "User not found." });
+        }
+
+        console.log({ message: "Phone token updated successfully." });
+    } catch (error) {
+        console.error('Error updating token:', error);
+        res.status(500).json({ message: "Internal server error." });
+    }
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/////////////////////////////////////////////////FOR LEAGUE ADDING
+
+router.post('/favorite_league', async (req, res) => {
+  try {
+    // Log the request body for debugging
+    
+
+    // Ensure req.body.pinned is a valid JSON string and parse it
+
+
+    console.log(req.body.id_)
+    // Update the user's favorite leagues
+    const updateResult = await register_model.updateOne(
+      { _id: req.body.id_ },
+      { $push: { favorite_league: req.body.league_id } } // Assuming pinnedData contains the league data
+    );
+
+    // Log a success message
+    console.log('Favorite League added successfully', updateResult);
+
+    // Send a success response to the client
+    res.status(200).json({ message: 'Favorite League added successfully' });
+
+  } catch (err) {
+    // Log the error and send an error response to the client
+    console.error('Error adding favorite League:', err);
+    res.status(500).json({ message: 'Error adding favorite Player', error: err.message });
+  }
+});
+
+
+router.post("/favorite_league_remove", async (req, res) => {
+  try {
+    // Log the request body for debugging
+    console.log('Request Body:', req.body);
+
+       
+ 
+
+    // Validate that necessary fields are present
+    if (!req.body.id_) {
+      return res.status(400).json({ message: 'Missing required field: userId' });
+    }
+ const updateResult = await register_model.updateOne(
+      { _id: req.body.  id_ },
+      { $pull: { favorite_league: req.body.league_id } }
+    );
+
+
+    // Check if any document was modified
+    if (updateResult.modifiedCount === 0) {
+      console.log({ message: 'User not found or no changes made' });
+    }
+
+    // Log a success message
+    console.log('Favorite   League removed successfully', updateResult);
+
+    // Send a success response to the client
+    res.status(200).json({ message: 'Favorite League removed successfully' });
+
+  } catch (err) {
+    // Log the error and send an error response to the client
+    console.error('Error removing favorite League:', err);
+    res.status(500).json({ message: 'Error removing favorite Player', error: err.message });
+  }
+});
+
+
+
+
+
+
+////////////////////////////////////////////////////FOR TEAM ADDING
+
+router.post('/favorite_team', async (req, res) => {
+  try {
+    // Log the request body for debugging
+    console.log(req.body);
+
+    // Ensure req.body.pinned is a valid JSON string and parse it
+    
+    // Update the user's favorite leagues
+     const updateResult = await register_model.updateOne(
+      { _id: req.body.id_ },
+      { $push: { favorite_team: req.body.league_id } } // Assuming pinnedData contains the league data
+    );
+    // Log a success message
+    console.log('Favorite Team added successfully', updateResult);
+
+    // Send a success response to the client
+    res.status(200).json({ message: 'Favorite Team added successfully' });
+
+  } catch (err) {
+    // Log the error and send an error response to the client
+    console.error('Error adding favorite League:', err);
+    res.status(500).json({ message: 'Error adding favorite Team', error: err.message });
+  }
+});
+
+
+router.post("/favorite_team_remove", async (req, res) => {
+  try {
+    // Log the request body for debugging
+    console.log('Request Body:', req.body);
+
+       
+ 
+
+    // Validate that necessary fields are present
+    if (!req.body.id_) {
+      return res.status(400).json({ message: 'Missing required field: userId' });
+    }
+
+    // Update the user's favorite leagues by pulling (removing) the object where league_id matches userId
+     const updateResult = await register_model.updateOne(
+      { _id: req.body.  id_ },
+      { $pull: { favorite_team: req.body.league_id } }
+    );
+
+
+    // Check if any document was modified
+    if (updateResult.modifiedCount === 0) {
+      return res.status(404).json({ message: 'User not found or no changes made' });
+    }
+
+    // Log a success message
+    console.log('Favorite Team removed successfully', updateResult);
+
+    // Send a success response to the client
+    res.status(200).json({ message: 'Favorite Team removed successfully' });
+
+  } catch (err) {
+    // Log the error and send an error response to the client
+    console.error('Error removing favorite Team:', err);
+    res.status(500).json({ message: 'Error removing favorite Team', error: err.message });
+  }
+});
+
+
+
+
+
+////////////////////////////////////////////////////FOR PLAYER ADDING
+
+router.post('/favorite_player', async (req, res) => {
+  try {
+    // Log the request body for debugging
+    console.log(req.body.id_);
+
+    // Ensure req.body.pinned is a valid JSON string and parse it
+
+
+
+    // Update the user's favorite leagues
+    const updateResult = await register_model.updateOne(
+      { _id: req.body.id_ },
+      { $push: { favorite_player: req.body.player_id } } // Assuming pinnedData contains the league data
+    );
+
+    // Log a success message
+    console.log('Favorite Player added successfully', updateResult);
+
+    // Send a success response to the client
+    res.status(200).json({ message: 'Favorite Player added successfully' });
+
+  } catch (err) {
+    // Log the error and send an error response to the client
+    console.error('Error adding favorite League:', err);
+    res.status(500).json({ message: 'Error adding favorite Player', error: err.message });
+  }
+});
+
+
+router.post("/favorite_player_remove", async (req, res) => {
+  try {
+    // Log the request body for debugging
+    console.log('Request Body:', req.body);
+
+       
+ 
+
+    // Validate that necessary fields are present
+    if (!req.body.id_) {
+      return res.status(400).json({ message: 'Missing required field: userId' });
+    }
+ const updateResult = await register_model.updateOne(
+      { _id: req.body.  id_ },
+      { $pull: { favorite_player: req.body.player_id } }
+    );
+
+
+    // Check if any document was modified
+    if (updateResult.modifiedCount === 0) {
+      console.log({ message: 'User not found or no changes made' });
+    }
+
+    // Log a success message
+    console.log('Favorite   Player removed successfully', updateResult);
+
+    // Send a success response to the client
+    res.status(200).json({ message: 'Favorite Player removed successfully' });
+
+  } catch (err) {
+    // Log the error and send an error response to the client
+    console.error('Error removing favorite Player:', err);
+    res.status(500).json({ message: 'Error removing favorite Player', error: err.message });
+  }
+});
+
+router.post("/pinned_matches",async(req, res)=>{
+            try {
+    // Log the request body for debugging
+    console.log(req.body);
+
+    // Ensure req.body.pinned is a valid JSON string and parse it
+    const pinnedData = req.body.player_id
+    console.log(pinnedData);
+
+    // Update the user's favorite leagues
+    const updateResult = await register_model.updateOne(
+      { _id: req.body.id_ },
+      { $push: { pinned_matches: req.body.player_id } } // Assuming pinnedData contains the league data
+    );
+
+    // Log a success message
+    console.log('Favorite match added successfully', updateResult);
+
+    // Send a success response to the client
+    res.status(200).json({ message: 'Favorite match added successfully' });
+
+  } catch (err) {
+    // Log the error and send an error response to the client
+    console.error('Error adding favorite match:', err);
+    res.status(500).json({ message: 'Error adding favorite match', error: err.message });
+  }
+})
+
+router.post("/unpinned_matches", async (req, res) => {
+  try {
+    // Log the request body for debugging
+    console.log('Request Body:', req.body);
+
+       
+ 
+
+    // Validate that necessary fields are present
+    if (!req.body.id_) {
+      return res.status(400).json({ message: 'Missing required field: userId' });
+    }
+ const updateResult = await register_model.updateOne(
+      { _id: req.body.  id_ },
+      { $pull: { pinned_matches: req.body.player_id } }
+    );
+
+
+    // Check if any document was modified
+    if (updateResult.modifiedCount === 0) {
+      console.log({ message: 'User not found or no changes made' });
+    }
+
+    // Log a success message
+    console.log('Favorite   Player removed successfully', updateResult);
+
+    // Send a success response to the client
+    res.status(200).json({ message: 'Favorite Player removed successfully' });
+
+  } catch (err) {
+    // Log the error and send an error response to the client
+    console.error('Error removing favorite Player:', err);
+    res.status(500).json({ message: 'Error removing favorite Player', error: err.message });
+  }
+});
+
+
+
+module.exports = {router, register_model, model_schema}

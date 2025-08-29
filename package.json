@@ -18,6 +18,8 @@
     "express": "^4.19.2",
     "firebase": "^10.13.2",
     "firebase-admin": "^12.5.0",
+    "hls": "^0.0.1",
+    "hls.js": "^1.6.10",
     "mongo": "^0.1.0",
     "mongodb": "^6.8.0",
     "mongoose": "^8.5.1",

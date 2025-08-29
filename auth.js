@@ -12,7 +12,7 @@ router.use(express.urlencoded({ extended: true }));
 
 
 
-const uri = "mongodb+srv://sportsup14:a4gM6dGvo7SHk9aX@cluster0.db0ee.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+const uri = "mongodb+srv://lonescore0_db_user:S4XF9yjKDR08cs66@cluster0.ysw7fpi.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
 mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log('Connected to MongoDB'))
   .catch(err => console.error(' connect to MongoDB', err));

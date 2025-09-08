@@ -9,6 +9,7 @@ const news_post = require("./post-news.js")
 const app = express()
 const axios = require("axios")
 const http = require("http")
+const request = require("request");
 require("./matchs_reload.js")
 const server = http.createServer(app)
 const io = require("./socket.js")

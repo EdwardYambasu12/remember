@@ -90,6 +90,20 @@ let userData = {
   followedPlayers: []
 };
 
+
+
+app.get("/football", (req, res) => {
+  request(
+    { url: "http://server1.bdixsports.live/all/appevent_football.php" },
+    (error, response, body) => {
+      if (error) {
+        return res.status(500).send("Error fetching remote page");
+      }
+      res.send(body); // send as HTTPS from your server
+    }
+  );
+});
+
 app.get("/sofa_data", async(req, res)=>{
     const response = await axios.get('https://www.sofascore.com/api/v1/sport/football/scheduled-events/2025-06-02', {
   headers: {

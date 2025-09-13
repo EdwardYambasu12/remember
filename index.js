@@ -9,7 +9,7 @@ const news_post = require("./post-news.js")
 const app = express()
 const axios = require("axios")
 const http = require("http")
-const request = require("request");
+const co = require("./co.js")
 require("./matchs_reload.js")
 const server = http.createServer(app)
 const io = require("./socket.js")
@@ -22,7 +22,7 @@ const io = require("./socket.js")
 
 
 
-
+app.use(co)
 const matches = require("./get_matches.js")
 const result = require("./result.js")
 const league = require("./inner_league.js")
@@ -93,45 +93,16 @@ let userData = {
 
 
 
-app.get("/football/*", async (req, res) => {
-  try {
-    const path = req.params[0]; // e.g., all/appevent_football.php?page=2
-    const remoteUrl = `http://server1.bdixsports.live/${path}`;
-
-    // Fetch the remote page
-    const response = await axios.get(remoteUrl);
-    let body = response.data;
-
-    // Rewrite HTTP links to HTTPS via your proxy
-    // 1️⃣ Links
-    body = body.replace(
-      /http:\/\/server1\.bdixsports\.live\//g,
-      `/football/`
-    );
-
-    // 2️⃣ Form actions
-    body = body.replace(
-      /action="http:\/\/server1\.bdixsports\.live\//g,
-      `action="/football/`
-    );
-
-    // 3️⃣ Scripts loading external HTTP resources
-    body = body.replace(
-      /src="http:\/\/server1\.bdixsports\.live\//g,
-      `src="/football/`
-    );
-
-    // 4️⃣ CSS, images, etc.
-    body = body.replace(
-      /url\((http:\/\/server1\.bdixsports\.live\/[^)]+)\)/g,
-      (match, p1) => `url(${p1.replace("http://server1.bdixsports.live/", "/football/")})`
-    );
-
-    res.send(body);
-  } catch (error) {
-    console.error(error.message);
-    res.status(500).send("Error fetching remote page");
-  }
+app.get("/football", (req, res) => {
+  request(
+    { url: "http://server1.bdixsports.live/all/appevent_football.php" },
+    (error, response, body) => {
+      if (error) {
+        return res.status(500).send("Error fetching remote page");
+      }
+      res.send(body); // send as HTTPS from your server
+    }
+  );
 });
 
 app.get("/sofa_data", async(req, res)=>{

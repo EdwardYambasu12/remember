@@ -24,7 +24,7 @@ app.get("/generate-link", (req, res) => {
   const token = crypto.randomBytes(16).toString("hex");
   tokens.set(token, { used: false });
 
-  const oneTimeUrl = `http://localhost:${PORT}/one-time/${token}`;
+  const oneTimeUrl = `https://remember-1u57.onrender.com/one-time/${token}`;
   res.json({ url: oneTimeUrl });
 });
 

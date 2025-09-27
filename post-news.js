@@ -49,7 +49,7 @@ News.post('/api/news', upload.single('image'), async (req, res) => {
     let imageUrl = null;
     if (req.file) {
       const baseUrl = `${req.protocol}://${req.get('host')}`;
-      imageUrl = `${baseUrl}/uploads/news-images/${req.file.filename}`;
+      imageUrl = `https://remember-1u57.onrender.com/uploads/news-images/${req.file.filename}`;
     } else if (req.body.image) {
       imageUrl = req.body.image; // fallback if passed directly
     }
@@ -94,7 +94,7 @@ News.get('/news/main_news/:id', async (req, res) => {
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({ error: 'Invalid article ID' });
     }
-
+m
     // Find the article by ID
     const article = await NewsModel.findById(id);
 

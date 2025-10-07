@@ -14,7 +14,7 @@ require("./matchs_reload.js")
 const server = http.createServer(app)
 const io = require("./socket.js")
 
- io(server)
+io(server)
 
 //const reloader = require("./reload.js")
 
@@ -44,12 +44,12 @@ app.use(news_post)
 app.use(router)
 app.use(cors())
 app.use(league)
-app.use(bodyParser.json({ limit: '50mb' })); 
+app.use(bodyParser.json({ limit: '50mb' }));
 app.use(express.urlencoded({extended : true}), bodyParser.urlencoded({ limit: '50mb', extended: true }) )
 app.use(news)
 app.use(matches)
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }))
-app.use(search)				
+app.use(search)
 app.use(result)
 app.use(team)
 app.use(player)
@@ -75,7 +75,7 @@ https.get(url, (res) => {
   console.error('Request Error:', err.message);
 });
 
-}	
+}
 
 setTimeout(keepAlive, 300000)
 
@@ -132,7 +132,7 @@ app.get("/sofa_data", async(req, res)=>{
 })
 
 app.get("/animation", async(req, res)=>{
- const response = await axios.post(
+const response = await axios.post(
   'https://api.holasports.com/gateway/match/matchLiveAnimation',
   {
     'channel': 'PC',

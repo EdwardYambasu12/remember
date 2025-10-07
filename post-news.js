@@ -20,8 +20,9 @@ const newsSchema = new mongoose.Schema({
 const NewsModel = mongoose.model('News', newsSchema);
 const News = express.Router();
 News.use(cors());
+
 // Ensure uploads folder exists
-const uploadDir = path.join(__dirname, '../uploads/news-images');
+const uploadDir = path.join(__dirname, 'uploads/news-images');
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
@@ -49,7 +50,10 @@ News.post('/api/news', upload.single('image'), async (req, res) => {
     let imageUrl = null;
     if (req.file) {
       const baseUrl = `${req.protocol}://${req.get('host')}`;
+      console.log("Base URL:", baseUrl);
+      console.log("Image URL:", imageUrl);
       imageUrl = `https://remember-1u57.onrender.com/uploads/news-images/${req.file.filename}`;
+      console.log("Image URL:", imageUrl);
     } else if (req.body.image) {
       imageUrl = req.body.image; // fallback if passed directly
     }
@@ -79,12 +83,14 @@ News.post('/api/news', upload.single('image'), async (req, res) => {
 News.use('/uploads/news-images', express.static(uploadDir));
 
 News.get("/news/main_news", async(req, res)=>{
-
-  const data = await NewsModel.find()
-
-  res.json(data)
-
-})
+  try {
+    const data = await NewsModel.find();
+    res.json(data);
+  } catch (error) {
+    console.error('Error fetching news:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
 
 News.get('/news/main_news/:id', async (req, res) => {
   try {
@@ -94,7 +100,7 @@ News.get('/news/main_news/:id', async (req, res) => {
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({ error: 'Invalid article ID' });
     }
-m
+    
     // Find the article by ID
     const article = await NewsModel.findById(id);
 

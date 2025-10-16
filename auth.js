@@ -79,17 +79,23 @@ router.get("/delete_all_users", async (req, res) => {
     res.status(500).json({ message: 'Error deleting users', error: err.message });
   }
 });
-router.get("/user_id", async(req, res)=>{
 
-  const user_id = req.body.id // id received from the frontend
+router.get("/users/:id", async (req, res) => {
+  try {
+    const user_id = req.params.id;
+    const user = await RegisterModel.findById(user_id);
 
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
 
-  const list_of_users = await RegisterModel.findById(user_id) // Find the specific user
+    res.json(user);
+  } catch (error) {
+    console.error("Error fetching user:", error.message);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
 
-  res.json(list_of_users) // send the user to the frontend
-
-
-})
 
 router.post("/api/favorites/sync", async (req, res) => {
      console.log(req.body, "name")

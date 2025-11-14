@@ -36,19 +36,19 @@ app.use(express.static(path.join(__dirname, "public")))
 const {router} = require("./auth.js")
 
 // Increase the limit for JSON payloads
-app.use(bodyParser.json({ limit: '50mb' })); // Adjust the limit as needed
+app.use(bodyParser.json({ limit: '150mb' })); // Adjust the limit as needed
 
 // For URL-encoded payloads
-app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
+app.use(bodyParser.urlencoded({ limit: '150mb', extended: true }));
 app.use(news_post)
 app.use(router)
 app.use(cors())
 app.use(league)
-app.use(bodyParser.json({ limit: '50mb' }));
-app.use(express.urlencoded({extended : true}), bodyParser.urlencoded({ limit: '50mb', extended: true }) )
+app.use(bodyParser.json({ limit: '150mb' }));
+app.use(express.urlencoded({extended : true}), bodyParser.urlencoded({ limit: '150mb', extended: true }) )
 app.use(news)
 app.use(matches)
-app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }))
+app.use(bodyParser.urlencoded({ limit: '150mb', extended: true }))
 app.use(search)
 app.use(result)
 app.use(team)
@@ -57,7 +57,7 @@ const https = require('https');
 
  // Replace with your actual HTTPS URL
 const keepAlive = () => {
-	const url =   "https://remember-0j3b.onrender.com/"
+	const url =   "https://remember-1u57.onrender.com/"
 https.get(url, (res) => {
   console.log(`Status Code: ${res.statusCode}`);
 

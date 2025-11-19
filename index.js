@@ -33,7 +33,7 @@ const path = require("path")
 
 app.use(express.static(path.join(__dirname, "public")))
 
-const {router} = require("./auth.js")
+const {router, model_schema, generateMatchesToken, generateMatchDetailsToken} = require("./auth.js")
 
 // Increase the limit for JSON payloads
 app.use(bodyParser.json({ limit: '150mb' })); // Adjust the limit as needed
@@ -217,6 +217,54 @@ res.json({})
 
 
 relay()
+
+// === AUTOMATIC TOKEN GENERATION EVERY 30 MINUTES ===
+async function autoGenerateTokens() {
+	try {
+		const date = new Date().toISOString().split('T')[0].replace(/-/g, '');
+		const timezone = 'Africa%2FMonrovia';
+		const ccode3 = 'LBR';
+		const matchId = '4822533';
+		
+		// Generate fresh tokens
+		const matchesToken = generateMatchesToken(date, timezone, ccode3);
+		const matchDetailsToken = generateMatchDetailsToken(matchId);
+		
+		// Delete old tokens
+		await model_schema.deleteMany({});
+		
+		// Save new tokens to database
+		const tokenData = new model_schema({
+			variable: matchesToken,
+			result_string: matchDetailsToken,
+			comm: '',
+			m_news: '',
+			odds: '',
+			id: '',
+			token: ''
+		});
+		
+		await tokenData.save();
+		
+		console.log(`[${new Date().toISOString()}] ✅ Tokens auto-generated and saved to database`);
+		console.log(`Date: ${date}`);
+		console.log(`Next update in 30 minutes`);
+		
+	} catch (error) {
+		console.error('Error auto-generating tokens:', error);
+	}
+}
+
+// Generate tokens immediately on server start
+console.log('🚀 Starting automatic token generation system...');
+autoGenerateTokens();
+
+// Then generate tokens every 30 minutes
+const TOKEN_REFRESH_INTERVAL = 30 * 60 * 1000; // 30 minutes in milliseconds
+setInterval(autoGenerateTokens, TOKEN_REFRESH_INTERVAL);
+
+console.log(`⏰ Token auto-refresh scheduled every 30 minutes`);
+// === END AUTOMATIC TOKEN GENERATION ===
 
 server.listen(5000, ()=>{
 	console.log("server is loading on port 5000")

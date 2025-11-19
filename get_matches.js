@@ -1,13 +1,23 @@
 const express = require("express")
 const axios = require("axios")
-const { model_schema } = require("./auth.js");
+const { model_schema, generateMatchesToken, generateXmasToken } = require("./auth.js");
 const matches = express.Router()
 
 matches.get("/man", async(req, res)=>{
 
-  const data = await model_schema.find()
-  console.log( data[0]["variable"])
-  const response = await axios.get('https://www.fotmob.com/api/matches', {
+  try {
+    const data = await model_schema.find()
+    
+    // Fallback: if no token in DB, generate one
+    let token = data[0]?.["variable"];
+    if (!token) {
+      const date = new Date().toISOString().split('T')[0].replace(/-/g, '');
+      token = generateMatchesToken(date, 'Africa%2FMonrovia', 'LBR');
+    }
+    
+    console.log("Using token:", token)
+    
+    const response = await axios.get('https://www.fotmob.com/api/matches', {
   params: {
     'date': '20241030',
     'timezone': 'Africa/Monrovia',
@@ -24,17 +34,23 @@ matches.get("/man", async(req, res)=>{
     'sec-fetch-mode': 'cors',
     'sec-fetch-site': 'same-origin',
     'user-agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1 Edg/130.0.0.0',
-    'x-mas': data[0]["variable"]
+    'x-mas': token
   }
 });
 
   res.json(response.data)
+  } catch (error) {
+    console.error('Error fetching matches:', error);
+    res.status(500).json({ error: 'Failed to fetch matches' });
+  }
 })
 
 matches.get("/audio_matches", async (req, res)=>{
+  try {
+    // Generate token for audio-matches endpoint
+    const token = generateXmasToken('/api/audio-matches');
 
-
-const response = await axios.get('https://www.fotmob.com/api/audio-matches', {
+    const response = await axios.get('https://www.fotmob.com/api/audio-matches', {
   headers: {
     'accept': '*/*',
     'accept-language': 'en-US,en;q=0.9',
@@ -46,26 +62,33 @@ const response = await axios.get('https://www.fotmob.com/api/audio-matches', {
     'sec-fetch-mode': 'cors',
     'sec-fetch-site': 'same-origin',
     'user-agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1 Edg/131.0.0.0',
-    'x-mas': 'eyJib2R5Ijp7InVybCI6Ii9hcGkvYXVkaW8tbWF0Y2hlcyIsImNvZGUiOjE3MzI5NjkyNzc0MjUsImZvbyI6ImU5NzNmYzczZiJ9LCJzaWduYXR1cmUiOiI0RTQ2NkE4Qjk3QTIwMTdDOTlGRjJDMDhCMkUxQ0Q3MCJ9'
+    'x-mas': token
   }
 });
 
-res.json(response.data)
+  res.json(response.data)
+  } catch (error) {
+    console.error('Error fetching audio matches:', error);
+    res.status(500).json({ error: 'Failed to fetch audio matches' });
+  }
 })
 
 matches.get("/match", async(req, res)=>{
+  try {
+    const data = await model_schema.find()
+    const {date, timeZone, code} = req.query
 
- const data = await model_schema.find()
-	const {date, timeZone, code} = req.query
+    console.log(req.query)
 
-console.log(req.query)
+    // Generate token with query parameters or use cached token
+    let token = data[0]?.["variable"];
+    if (!token || date) {
+      // Generate fresh token if date is provided
+      const encodedTimezone = timeZone ? encodeURIComponent(timeZone) : 'Africa%2FMonrovia';
+      token = generateMatchesToken(date, encodedTimezone, code || 'LBR');
+    }
 
-	const match_fetch = async()=>{
-
-		try{
-
-
-const response = await axios.get('https://www.fotmob.com/api/matches', {
+    const response = await axios.get('https://www.fotmob.com/api/matches', {
   params: {
     'date': date,
     'timezone': timeZone,
@@ -85,54 +108,46 @@ const response = await axios.get('https://www.fotmob.com/api/matches', {
     'sec-fetch-mode': 'cors',
     'sec-fetch-site': 'same-origin',
     'user-agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1 Edg/130.0.0.0',
-    'x-mas': data[0]["variable"]
-}});
+    'x-mas': token
+  }
+});
 
-
-
-	res.json(response.data)
-}
-catch(e){
-	console.log(e)
-}
-}
-
-
-
-
-
-match_fetch()
+    res.json(response.data)
+  } catch(e) {
+    console.log(e)
+    res.status(500).json({ error: 'Failed to fetch matches' });
+  }
 })
 
 
 
 matches.get("/all_leagues",async (req, res)=>{
- const data = await model_schema.find()
+  try {
+    const data = await model_schema.find()
+    
+    // Generate token or use cached
+    let token = data[0]?.["variable"];
+    if (!token) {
+      token = generateXmasToken('/api/allLeagues?locale=en&country=INT');
+    }
 
-const league_fetch = async()=>{
-
-	try{
-const response = await axios.get('https://www.fotmob.com/api/allLeagues', {
+    const response = await axios.get('https://www.fotmob.com/api/allLeagues', {
   params: {
     'locale': 'en',
     'country': 'INT'
   },
   headers: {
-    'x-mas': data[0]["variable"],
+    'x-mas': token,
     'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1 Edg/130.0.0.0',
     'Referer': 'https://www.fotmob.com/'
   }
 });
 
-		res.json(response.data)
-}
-catch(e){
-	console.log(e)
-}
-}
-
-league_fetch()
-
+    res.json(response.data)
+  } catch(e) {
+    console.log(e)
+    res.status(500).json({ error: 'Failed to fetch leagues' });
+  }
 })
 
 

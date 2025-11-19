@@ -1,6 +1,6 @@
 const express = require("express")
 const axios = require("axios")
-const { model_schema } = require("./auth.js");
+const { model_schema, generateMatchDetailsToken } = require("./auth.js");
 
 const result = express.Router()
 
@@ -9,9 +9,16 @@ const result = express.Router()
 
 result.get("/strong", async (req, res)=>{
   try{
-     const data = await model_schema.find()
-const id = req.query.id
-  const response = await axios.get('https://www.fotmob.com/api/matchDetails', {
+    const data = await model_schema.find()
+    const id = req.query.id
+    
+    // Generate token for this specific match or use cached
+    let token = data[0]?.["result_string"];
+    if (!token) {
+      token = generateMatchDetailsToken('4535423');
+    }
+    
+    const response = await axios.get('https://www.fotmob.com/api/matchDetails', {
   params: {
     'matchId': '4535423'
   },
@@ -29,7 +36,7 @@ const id = req.query.id
     'sec-fetch-mode': 'cors',
     'sec-fetch-site': 'same-origin',
     'user-agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1 Edg/130.0.0.0',
-    'x-mas':  data[0]["result_string"]
+    'x-mas': token
   }
 });
 
@@ -46,9 +53,14 @@ catch (e){
 result.get("/result", async(req, res)=>{
 
 	try{
-       const data = await model_schema.find()
+    const data = await model_schema.find()
+	  const id = req.query.id
 
-	const id = req.query.id
+    // Generate token for this specific match ID
+    let token = data[0]?.["result_string"];
+    if (!token || id?.id) {
+      token = generateMatchDetailsToken(id?.id || '4822533');
+    }
 
 	  const response = await axios.get('https://www.fotmob.com/api/matchDetails', {
   params: {
@@ -68,7 +80,7 @@ result.get("/result", async(req, res)=>{
     'sec-fetch-mode': 'cors',
     'sec-fetch-site': 'same-origin',
     'user-agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1 Edg/130.0.0.0',
-    'x-mas': data[0]["result_string"]
+    'x-mas': token
   }
 });
 
@@ -178,7 +190,7 @@ const response = await axios.get('https://www.fotmob.com/api/ltc', {
     'sec-fetch-mode': 'cors',
     'sec-fetch-site': 'same-origin',
     'user-agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1 Edg/131.0.0.0',
-    'x-mas':  datad[0]["comm"]
+    'x-mas':  data[0]["comm"]
   }
 
 });

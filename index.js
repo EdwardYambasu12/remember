@@ -1,7 +1,6 @@
 require('dotenv').config();
 const express = require("express")
 const cors = require("cors")
-//const {router}= require("./auth.js")
 const bodyParser = require('body-parser');
 const news = require("./news.js")
 const search = require("./search.js")
@@ -16,39 +15,40 @@ const io = require("./socket.js")
 
 io(server)
 
-//const reloader = require("./reload.js")
+// === CORS MUST BE FIRST (before any routes) ===
+app.use(cors({
+  origin: '*', // Allow all origins (or specify: 'http://localhost:8080')
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
+}));
 
+// Handle preflight requests
+app.options('*', cors());
 
+// === Body parsing middleware ===
+app.use(bodyParser.json({ limit: '150mb' }));
+app.use(bodyParser.urlencoded({ limit: '150mb', extended: true }));
+app.use(express.urlencoded({extended : true}));
 
+// === Static files ===
+const path = require("path")
+app.use(express.static(path.join(__dirname, "public")))
 
-
-app.use(co)
+// === Routes (after CORS and body parsing) ===
 const matches = require("./get_matches.js")
 const result = require("./result.js")
 const league = require("./inner_league.js")
 const team = require("./team.js")
 const player = require("./player.js")
-const path = require("path")
-
-
-app.use(express.static(path.join(__dirname, "public")))
-
 const {router, model_schema, generateMatchesToken, generateMatchDetailsToken} = require("./auth.js")
 
-// Increase the limit for JSON payloads
-app.use(bodyParser.json({ limit: '150mb' })); // Adjust the limit as needed
-
-// For URL-encoded payloads
-app.use(bodyParser.urlencoded({ limit: '150mb', extended: true }));
+app.use(co)
 app.use(news_post)
 app.use(router)
-app.use(cors())
 app.use(league)
-app.use(bodyParser.json({ limit: '150mb' }));
-app.use(express.urlencoded({extended : true}), bodyParser.urlencoded({ limit: '150mb', extended: true }) )
 app.use(news)
 app.use(matches)
-app.use(bodyParser.urlencoded({ limit: '150mb', extended: true }))
 app.use(search)
 app.use(result)
 app.use(team)

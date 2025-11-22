@@ -55,6 +55,8 @@ app.use(team)
 app.use(player)
 const https = require('https');
 
+PORT = process.env.PORT || 5000
+
  // Replace with your actual HTTPS URL
 const keepAlive = () => {
 	const url =   "https://remember-1u57.onrender.com/"
@@ -246,7 +248,7 @@ async function autoGenerateTokens() {
 		
 		await tokenData.save();
 		
-		console.log(`[${new Date().toISOString()}] ✅ Tokens auto-generated and saved to database`);
+		console.log(`[${new Date().toISOString()}] :) Tokens auto-generated and saved to database`);
 		console.log(`Date: ${date}`);
 		console.log(`Next update in 30 minutes`);
 		
@@ -256,18 +258,18 @@ async function autoGenerateTokens() {
 }
 
 // Generate tokens immediately on server start
-console.log('🚀 Starting automatic token generation system...');
+console.log('Starting automatic token generation system...');
 autoGenerateTokens();
 
 // Then generate tokens every 30 minutes
 const TOKEN_REFRESH_INTERVAL = 30 * 60 * 1000; // 30 minutes in milliseconds
 setInterval(autoGenerateTokens, TOKEN_REFRESH_INTERVAL);
 
-console.log(`⏰ Token auto-refresh scheduled every 30 minutes`);
+console.log(`Token auto-refresh scheduled every 30 minutes`);
 // === END AUTOMATIC TOKEN GENERATION ===
 
-server.listen(5000, ()=>{
-	console.log("server is loading on port 5000")
+server.listen(PORT, ()=>{
+	console.log(`server is loading on port ${PORT}`)
 })
 
 

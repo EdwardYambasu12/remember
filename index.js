@@ -15,7 +15,6 @@ const io = require("./socket.js")
 
 io(server)
 
-// === CORS MUST BE FIRST (before any routes) ===
 app.use(cors({
   origin: '*',
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
@@ -23,19 +22,15 @@ app.use(cors({
   credentials: true
 }));
 
-// Handle preflight requests
 app.options('*', cors());
 
-// === Body parsing middleware ===
 app.use(bodyParser.json({ limit: '150mb' }));
 app.use(bodyParser.urlencoded({ limit: '150mb', extended: true }));
 app.use(express.urlencoded({extended : true}));
 
-// === Static files ===
 const path = require("path")
 app.use(express.static(path.join(__dirname, "public")))
 
-// === Health Check / Root Endpoint ===
 app.get('/', (req, res) => {
   res.json({
     status: 'success',
@@ -45,7 +40,6 @@ app.get('/', (req, res) => {
   });
 });
 
-// === API Status Endpoint ===
 app.get('/api/status', (req, res) => {
   res.json({
     status: 'healthy',
@@ -56,7 +50,6 @@ app.get('/api/status', (req, res) => {
   });
 });
 
-// === Routes (after CORS and body parsing) ===
 const matches = require("./get_matches.js")
 const result = require("./result.js")
 const league = require("./inner_league.js")
@@ -87,31 +80,8 @@ const keepAlive = () => {
   });
 };
 
-setTimeout(keepAlive, 300000)
-
-function relay(){
-  setInterval(async()=>{
-    const date = new Date().toISOString().split('T')[0].replace(/-/g, '');
-    const matchesToken = generateMatchesToken(date, 'Africa%2FMonrovia', 'LBR');
-    const matchDetailsToken = generateMatchDetailsToken('4822533');
-    
-    try {
-      await model_schema.updateOne(
-        {},
-        {
-          variable: matchesToken,
-          result_string: matchDetailsToken,
-        },
-        { upsert: true }
-      );
-      console.log('Tokens refreshed successfully');
-    } catch (error) {
-      console.error('Token refresh error:', error);
-    }
-  }, 180000); // 3 minutes
-}
-
-relay();
+setTimeout(keepAlive, 120000)
+setInterval(keepAlive, 120000)
 
 let userData = {
   favoriteLeagues: [],
@@ -124,7 +94,7 @@ app.post("/api/chat", async (req, res) => {
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
-        "Authorization": `Bearer ${process.env.OPENAI_API_KEY }`,
+        "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
@@ -149,7 +119,7 @@ app.get("/football", (req, res) => {
       if (error) {
         return res.status(500).send("Error fetching remote page");
       }
-      res.send(body); // send as HTTPS from your server
+      res.send(body);
     }
   );
 });
@@ -242,58 +212,68 @@ const response = await axios.post(
 res.json({})
 })
 
+let lastTokenGenerationTime = null;
+const TOKEN_MAX_AGE = 9 * 60 * 1000;
 
-relay()
-
-// === AUTOMATIC TOKEN GENERATION EVERY 30 MINUTES ===
 async function autoGenerateTokens() {
-	try {
-		const date = new Date().toISOString().split('T')[0].replace(/-/g, '');
-		const timezone = 'Africa%2FMonrovia';
-		const ccode3 = 'LBR';
-		const matchId = '4822533';
-		
-		// Generate fresh tokens
-		const matchesToken = generateMatchesToken(date, timezone, ccode3);
-		const matchDetailsToken = generateMatchDetailsToken(matchId);
-		
-		// Delete old tokens
-		await model_schema.deleteMany({});
-		
-		// Save new tokens to database
-		const tokenData = new model_schema({
-			variable: matchesToken,
-			result_string: matchDetailsToken,
-			comm: '',
-			m_news: '',
-			odds: '',
-			id: '',
-			token: ''
-		});
-		
-		await tokenData.save();
-		
-		console.log(`[${new Date().toISOString()}] :) Tokens auto-generated and saved to database`);
-		console.log(`Date: ${date}`);
-		console.log(`Next update in 30 minutes`);
-		
-	} catch (error) {
-		console.error('Error auto-generating tokens:', error);
-	}
+    try {
+        const date = new Date().toISOString().split('T')[0].replace(/-/g, '');
+        const timezone = 'Africa%2FMonrovia';
+        const ccode3 = 'LBR';
+        const matchId = '4822533';
+        
+        // Generate fresh tokens
+        const matchesToken = generateMatchesToken(date, timezone, ccode3);
+        const matchDetailsToken = generateMatchDetailsToken(matchId);
+        
+        // Delete old tokens
+        await model_schema.deleteMany({});
+        
+        // Save new tokens to database
+        const tokenData = new model_schema({
+            variable: matchesToken,
+            result_string: matchDetailsToken,
+            comm: '',
+            m_news: '',
+            odds: '',
+            id: '',
+            token: ''
+        });
+        
+        await tokenData.save();
+        
+        // Update last generation time
+        lastTokenGenerationTime = Date.now();
+        
+        console.log(`[${new Date().toISOString()}] Tokens generated and saved`);
+        console.log(`Date: ${date}`);
+        console.log(`Next refresh: ${new Date(Date.now() + 10 * 60 * 1000).toLocaleTimeString()}`);
+        
+    } catch (error) {
+        console.error('Token generation error:', error);
+    }
 }
 
-// Generate tokens immediately on server start
-console.log('Starting automatic token generation system...');
-autoGenerateTokens();
+app.use(async (req, res, next) => {
+    if (req.path.startsWith('/public') || req.path === '/' || req.path === '/api/status') {
+        return next();
+    }
+    
+    // Check if tokens are stale
+    const now = Date.now();
+    const tokenAge = lastTokenGenerationTime ? now - lastTokenGenerationTime : Infinity;
+    
+    if (tokenAge > TOKEN_MAX_AGE) {
+        console.log(`[WAKE-UP DETECTED] Tokens are ${Math.round(tokenAge / 60000)} minutes old`);
+        console.log(`Regenerating tokens immediately...`);
+        
+        // Regenerate tokens immediately
+        await autoGenerateTokens();
+    }
+    
+    next();
+});
 
-// Then generate tokens every 30 minutes
-const TOKEN_REFRESH_INTERVAL = 30 * 60 * 1000; // 30 minutes in milliseconds
-setInterval(autoGenerateTokens, TOKEN_REFRESH_INTERVAL);
-
-console.log(`Token auto-refresh scheduled every 30 minutes`);
-// === END AUTOMATIC TOKEN GENERATION ===
-
-// === 404 Handler ===
 app.use((req, res) => {
   res.status(404).json({
     status: 'error',
@@ -303,9 +283,19 @@ app.use((req, res) => {
   });
 });
 
-server.listen(PORT, ()=>{
-	console.log(`server is loading on port ${PORT}`)
+server.listen(PORT, async ()=>{
+    console.log(`\n${'='.repeat(60)}`);
+    console.log(`LoneScore Server Started`);
+    console.log(`${'='.repeat(60)}`);
+    console.log(`Server: ${PORT}`);
+    console.log(`Starting automatic token generation...`);
+    await autoGenerateTokens();
+    const TOKEN_REFRESH_INTERVAL = 10 * 60 * 1000;
+    setInterval(autoGenerateTokens, TOKEN_REFRESH_INTERVAL);
+    console.log(`Token auto-refresh scheduled every 10 minutes`);
+    console.log(`Wake-up detection enabled (auto-refresh on stale tokens)`);
+    
+    console.log(`${'='.repeat(60)}\n`);
 })
-
 
 module.exports = server

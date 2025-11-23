@@ -15,27 +15,22 @@ async function  lets_return() {
 }
 
 async function fetchData() {
-
-
     try {
         const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-        
         const formattedDate = getFormattedDate();
-
         const newData = await fetchMatches(formattedDate);
 
+        // Log changes only when they happen
+        if (changes_list.length > 0) {
+            console.log(`📊 [Match Updates] ${changes_list.length} changes detected`);
+        }
 
-       
-
-        holder = newData
-       
-        previousData = newData;  // Update previousData
-       
-       
+        holder = newData;
+        previousData = newData;
     } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error('❌ Error fetching match data:', error);
     } finally {
-        setTimeout(fetchData, 5000);  // Fetch data again after 10 seconds
+        setTimeout(fetchData, 5000);  // Fetch data again after 5 seconds
     }
 }
 fetchData()
@@ -123,6 +118,4 @@ async function findChanges(previousData, newData) {
 
 }
 
- console.log(changes_list, "list")
-
- module.exports = lets_return
+module.exports = lets_return

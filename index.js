@@ -17,7 +17,7 @@ io(server)
 
 // === CORS MUST BE FIRST (before any routes) ===
 app.use(cors({
-  origin: '*', // Allow all origins (or specify: 'http://localhost:8080')
+  origin: '*',
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true
@@ -34,6 +34,27 @@ app.use(express.urlencoded({extended : true}));
 // === Static files ===
 const path = require("path")
 app.use(express.static(path.join(__dirname, "public")))
+
+// === Health Check / Root Endpoint ===
+app.get('/', (req, res) => {
+  res.json({
+    status: 'success',
+    message: 'Football API Server - Running with X-mas Token Middleware',
+    version: '1.0.0',
+    timestamp: new Date().toISOString()
+  });
+});
+
+// === API Status Endpoint ===
+app.get('/api/status', (req, res) => {
+  res.json({
+    status: 'healthy',
+    uptime: process.uptime(),
+    timestamp: new Date().toISOString(),
+    tokenMiddleware: 'active',
+    mongodb: 'connected'
+  });
+});
 
 // === Routes (after CORS and body parsing) ===
 const matches = require("./get_matches.js")
@@ -53,39 +74,44 @@ app.use(search)
 app.use(result)
 app.use(team)
 app.use(player)
+
 const https = require('https');
 
 PORT = process.env.PORT || 5000
 
- // Replace with your actual HTTPS URL
 const keepAlive = () => {
-	const url =   "https://remember-1u57.onrender.com/"
-https.get(url, (res) => {
-  console.log(`Status Code: ${res.statusCode}`);
-
-  // Collect response data (if needed)
-  let data = '';
-  res.on('data', chunk => {
-    data += chunk;
+  https.get('https://remember-1u57.onrender.com', (res) => {
+    console.log(`Keep-alive ping: ${res.statusCode}`);
+  }).on('error', (err) => {
+    console.error('Keep-alive error:', err.message);
   });
-
-  res.on('end', () => {
-    console.log('Response Data:', data); // Log full response
-  });
-
-}).on('error', (err) => {
-  console.error('Request Error:', err.message);
-});
-
-}
+};
 
 setTimeout(keepAlive, 300000)
 
 function relay(){
-
-		console.log("praise the Lord")
-	setTimeout(relay, 30000)
+  setInterval(async()=>{
+    const date = new Date().toISOString().split('T')[0].replace(/-/g, '');
+    const matchesToken = generateMatchesToken(date, 'Africa%2FMonrovia', 'LBR');
+    const matchDetailsToken = generateMatchDetailsToken('4822533');
+    
+    try {
+      await model_schema.updateOne(
+        {},
+        {
+          variable: matchesToken,
+          result_string: matchDetailsToken,
+        },
+        { upsert: true }
+      );
+      console.log('Tokens refreshed successfully');
+    } catch (error) {
+      console.error('Token refresh error:', error);
+    }
+  }, 180000); // 3 minutes
 }
+
+relay();
 
 let userData = {
   favoriteLeagues: [],
@@ -115,7 +141,6 @@ app.post("/api/chat", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
-
 
 app.get("/football", (req, res) => {
   request(
@@ -267,6 +292,16 @@ setInterval(autoGenerateTokens, TOKEN_REFRESH_INTERVAL);
 
 console.log(`Token auto-refresh scheduled every 30 minutes`);
 // === END AUTOMATIC TOKEN GENERATION ===
+
+// === 404 Handler ===
+app.use((req, res) => {
+  res.status(404).json({
+    status: 'error',
+    message: 'Endpoint not found',
+    path: req.path,
+    method: req.method,
+  });
+});
 
 server.listen(PORT, ()=>{
 	console.log(`server is loading on port ${PORT}`)

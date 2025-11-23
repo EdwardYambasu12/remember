@@ -137,8 +137,8 @@ function generateMatchDetailsToken(matchId) {
 
 const uri = "mongodb+srv://sportsup14:a4gM6dGvo7SHk9aX@cluster0.db0ee.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
 mongoose.connect(uri)
-  .then(() => console.log('Connected to MongoDB'))
-  .catch(err => console.error(' connect to MongoDB', err));
+  .then(() => console.log('MongoDB: Connected'))
+  .catch(err => console.error('MongoDB: error{Not Connected}', err));
 
 const registerSchema = new mongoose.Schema({
   email: { type: String,  },

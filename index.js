@@ -50,6 +50,15 @@ app.get('/api/status', (req, res) => {
   });
 });
 
+app.get('/ping', (req, res) => {
+  res.json({
+    status: 'alive',
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+    message: 'Server is awake'
+  });
+});
+
 const matches = require("./get_matches.js")
 const result = require("./result.js")
 const league = require("./inner_league.js")
@@ -72,16 +81,35 @@ const https = require('https');
 
 PORT = process.env.PORT || 5000
 
+const KEEP_ALIVE_URL = 'https://remember-1u57.onrender.com/ping';
+const KEEP_ALIVE_INTERVAL = 60 * 1000; // 1 minute
+
+let keepAliveCount = 0;
+let lastKeepAliveSuccess = null;
+
 const keepAlive = () => {
-  https.get('https://remember-1u57.onrender.com', (res) => {
-    console.log(`Keep-alive ping: ${res.statusCode}`);
+  const startTime = Date.now();
+  
+  https.get(KEEP_ALIVE_URL, (res) => {
+    const responseTime = Date.now() - startTime;
+    keepAliveCount++;
+    lastKeepAliveSuccess = new Date();
+    
+    if (res.statusCode === 200) {
+      console.log(`Keep-alive #${keepAliveCount} | Status: ${res.statusCode} | Response: ${responseTime}ms`);
+    } else {
+      console.log(`Keep-alive #${keepAliveCount} | Status: ${res.statusCode}`);
+    }
   }).on('error', (err) => {
-    console.error('Keep-alive error:', err.message);
+    console.error(`Keep-alive #${keepAliveCount} failed:`, err.message);
   });
 };
 
-setTimeout(keepAlive, 120000)
-setInterval(keepAlive, 120000)
+setTimeout(() => {
+  console.log('Starting keep-alive system...');
+  keepAlive();
+  setInterval(keepAlive, KEEP_ALIVE_INTERVAL);
+}, 30000);
 
 let userData = {
   favoriteLeagues: [],
@@ -255,7 +283,8 @@ async function autoGenerateTokens() {
 }
 
 app.use(async (req, res, next) => {
-    if (req.path.startsWith('/public') || req.path === '/' || req.path === '/api/status') {
+    // Skip for static files, health checks, and ping endpoint
+    if (req.path.startsWith('/public') || req.path === '/' || req.path === '/api/status' || req.path === '/ping') {
         return next();
     }
     

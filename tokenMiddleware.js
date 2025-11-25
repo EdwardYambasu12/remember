@@ -8,6 +8,11 @@ const { model_schema, generateXmasToken, generateMatchesToken, generateMatchDeta
  */
 async function getOrGenerateToken(type, params = {}) {
   try {
+    // If forceRefresh is true, skip database lookup and generate fresh token
+    if (params.forceRefresh) {
+      return generateXmasToken(params.urlPath || '/api/data/matches');
+    }
+
     const data = await model_schema.findOne();
     
     switch(type) {
@@ -25,8 +30,12 @@ async function getOrGenerateToken(type, params = {}) {
         return generateMatchDetailsToken(params.matchId || '4822533');
         
       case 'commentary':
+        // Commentary tokens should always be fresh due to URL uniqueness
+        if (params.urlPath) {
+          return generateXmasToken(params.urlPath);
+        }
         if (data?.comm) return data.comm;
-        return generateXmasToken(params.urlPath);
+        return generateXmasToken(params.urlPath || '/api/data/ltc');
         
       case 'news':
         if (data?.m_news) return data.m_news;

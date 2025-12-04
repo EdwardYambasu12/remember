@@ -13,7 +13,7 @@ team.get("/team", async(req, res)=>{
       matchId: teamId 
     });
 
-    const response = await axios.get('https://www.fotmob.com/api/teams', {
+    const response = await axios.get('https://www.fotmob.com/api/data/teams', {
       params: {
         'id': teamId,
         'ccode3': 'LBR'
@@ -37,10 +37,10 @@ team.get("/team_news", async(req, res)=>{
     const teamId = req.query.id;
     
     const token = await getOrGenerateToken('news', {
-      urlPath: `/api/tlnews?id=${teamId}&type=team&language=en&startIndex=0`
+      urlPath: `/api/data/tlnews?id=${teamId}&type=team&language=en&startIndex=0`
     });
 
-    const response = await axios.get('https://www.fotmob.com/api/tlnews', {
+    const response = await axios.get('https://www.fotmob.com/api/data/tlnews', {
       params: {
         'id': teamId,
         'type': 'team',

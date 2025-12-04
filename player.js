@@ -12,7 +12,7 @@ player.get("/player", async(req, res)=>{
       matchId: playerId 
     });
 
-    const response = await axios.get('https://www.fotmob.com/api/playerData', {
+    const response = await axios.get('https://www.fotmob.com/api/data/playerData', {
       params: { 'id': playerId },
       headers: {
         'accept': '*/*',

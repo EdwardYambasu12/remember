@@ -34,7 +34,7 @@ app.use(express.static(path.join(__dirname, "public")))
 app.get('/', (req, res) => {
   res.json({
     status: 'success',
-    message: 'Football API Server - Running with X-mas Token Middleware',
+    message: 'LoneScore API Server - Running with X-mas Token Middleware',
     version: '1.0.0',
     timestamp: new Date().toISOString()
   });
@@ -65,6 +65,7 @@ const league = require("./inner_league.js")
 const team = require("./team.js")
 const player = require("./player.js")
 const {router, model_schema, generateMatchesToken, generateMatchDetailsToken} = require("./auth.js")
+const chat = require("./chat.js")
 
 app.use(co)
 app.use(news_post)
@@ -76,6 +77,7 @@ app.use(search)
 app.use(result)
 app.use(team)
 app.use(player)
+app.use("/api/chat", chat)
 
 const https = require('https');
 

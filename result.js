@@ -9,7 +9,7 @@ result.get("/strong", async (req, res)=>{
   try {
     const token = await getOrGenerateToken('matchDetails', { matchId: '4535423' });
     
-    const response = await axios.get('https://www.fotmob.com/api/matchDetails', {
+    const response = await axios.get('https://www.fotmob.com/api/data/matchDetails', {
       params: { 'matchId': '4535423' },
       headers: {
         'accept': '*/*',
@@ -31,7 +31,7 @@ result.get("/result", async(req, res)=>{
     const id = req.query.id;
     const token = await getOrGenerateToken('matchDetails', { matchId: id?.id });
 
-    const response = await axios.get('https://www.fotmob.com/api/matchDetails', {
+    const response = await axios.get('https://www.fotmob.com/api/data/matchDetails', {
       params: { 'matchId': id.id },
       headers: {
         'accept': '*/*',
@@ -51,10 +51,10 @@ result.get("/result", async(req, res)=>{
 result.get("/match_odds", async(req, res)=>{
   try {
     const token = await getOrGenerateToken('odds', { 
-      urlPath: `/api/matchOdds?matchId=${req.query.id.id}&ccode3=INT` 
+      urlPath: `/api/data/matchOdds?matchId=${req.query.id.id}&ccode3=INT` 
     });
 
-    const response = await axios.get('https://www.fotmob.com/api/matchOdds', {
+    const response = await axios.get('https://www.fotmob.com/api/data/matchOdds', {
       params: {
         'matchId': req.query.id.id,
         'ccode3': 'INT'
@@ -77,10 +77,10 @@ result.get("/match_odds", async(req, res)=>{
 result.get("/match_news", async(req, res)=>{
   try {
     const token = await getOrGenerateToken('news', {
-      urlPath: `/api/matchNews?id=${req.query.id}&ccode3=LBR&lang=en`
+      urlPath: `/api/data/matchNews?id=${req.query.id}&ccode3=LBR&lang=en`
     });
 
-    const response = await axios.get('https://www.fotmob.com/api/matchNews', {
+    const response = await axios.get('https://www.fotmob.com/api/data/matchNews', {
       params: {
         'id': req.query.id,
         'ccode3': 'LBR',
@@ -209,10 +209,10 @@ result.get("/audio_commentary", async(req, res)=>{
     const { id } = req.query;
     
     const token = await getOrGenerateToken('default', {
-      urlPath: `/api/audio-live-stream?id=${id}&acceptLangs=en-US&userLang=en`
+      urlPath: `/api/data/audio-live-stream?id=${id}&acceptLangs=en-US&userLang=en`
     });
 
-    const response = await axios.get('https://www.fotmob.com/api/audio-live-stream', {
+    const response = await axios.get('https://www.fotmob.com/api/data/audio-live-stream', {
       params: {
         'id': id,
         'acceptLangs': 'en-US',

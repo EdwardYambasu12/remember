@@ -10,12 +10,12 @@ search.get("/search", async(req, res)=>{
     const { term } = req.query;
     
     const token = await getOrGenerateToken('default', {
-      urlPath: `/api/search/suggest?hits=50&lang=en&term=${term}`
+      urlPath: `/api/data/search/suggest?hits=50&lang=en&term=${term}`
     });
 
-    const response = await axios.get('https://www.fotmob.com/api/search/suggest', {
+    const response = await axios.get('https://www.fotmob.com/api/data/search/suggest', {
       params: {
-        'hits': '50',
+        'hits': '100',
         'lang': 'en',
         'term': term
       },

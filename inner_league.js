@@ -13,7 +13,7 @@ league.get("/round", async(req, res)=>{
       matchId: id 
     });
 
-    const response = await axios.get('https://www.fotmob.com/api/team-of-the-week/rounds', {
+    const response = await axios.get('https://www.fotmob.com/api/data/team-of-the-week/rounds', {
       params: {
         'leagueId': id,
         'season': season
@@ -41,7 +41,7 @@ league.get("/totw", async(req, res)=>{
       matchId: id 
     });
 
-    const response = await axios.get('https://www.fotmob.com/api/team-of-the-week/team', {
+    const response = await axios.get('https://www.fotmob.com/api/data/team-of-the-week/team', {
       params: {
         'leagueId': id,
         'roundId': round,
@@ -70,7 +70,7 @@ league.get("/league", async(req, res)=>{
       matchId: leagueId 
     });
 
-    const response = await axios.get('https://www.fotmob.com/api/leagues', {
+    const response = await axios.get('https://www.fotmob.com/api/data/leagues', {
       params: {
         'id': leagueId,
         'ccode3': 'LBR'
@@ -97,10 +97,10 @@ league.get("/league_news", async(req, res)=>{
     const leagueId = req.query.id;
     
     const token = await getOrGenerateToken('news', {
-      urlPath: `/api/tlnews?id=${leagueId}&type=league&language=en&startIndex=0`
+      urlPath: `/api/data/tlnews?id=${leagueId}&type=league&language=en&startIndex=0`
     });
 
-    const response = await axios.get('https://www.fotmob.com/api/tlnews', {
+    const response = await axios.get('https://www.fotmob.com/api/data/tlnews', {
       params: {
         'id': leagueId,
         'type': 'league',

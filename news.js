@@ -37,6 +37,35 @@ news.get("/sportsup_news", async(req, res)=>{
   }
 })
 
+news.get("/latest_news", async(req, res)=>{
+  try {
+    const startIndex = req.query.startIndex || 0;
+    const page = req.query.page || 1;
+    
+    const token = await getOrGenerateToken('news', {
+      urlPath: `/api/news/latestNews?startIndex=${startIndex}&lang=en-GB&page=${page}`
+    });
+
+    const response = await axios.get('https://www.fotmob.com/api/news/latestNews', {
+      params: {
+        'startIndex': startIndex,
+        'lang': 'en-GB',
+        'page': page
+      },
+      headers: {
+        'accept': '*/*',
+        'user-agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15',
+        'x-mas': token
+      }
+    });
+
+    res.json(response.data);
+  } catch(e) {
+    console.error('Latest news error:', e);
+    res.status(500).json({ error: 'Failed to fetch latest news' });
+  }
+})
+
 news.get("/top", async(req, res)=>{
   try {
     const token = await getOrGenerateToken('default', {

@@ -39,10 +39,10 @@ matches.get("/man", async(req, res)=>{
 matches.get("/audio_matches", async (req, res)=>{
   try {
     const token = await getOrGenerateToken('default', {
-      urlPath: '/api/audio-matches'
+      urlPath: '/api/data/audio-matches'
     });
 
-    const response = await axios.get('https://www.fotmob.com/api/audio-matches', {
+    const response = await axios.get('https://www.fotmob.com/api/data/audio-matches', {
       headers: {
         'accept': '*/*',
         'user-agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15',
@@ -92,10 +92,10 @@ matches.get("/match", async(req, res)=>{
 matches.get("/all_leagues", async (req, res)=>{
   try {
     const token = await getOrGenerateToken('default', {
-      urlPath: '/api/allLeagues?locale=en&country=INT'
+      urlPath: '/api/data/allLeagues?locale=en&country=INT'
     });
 
-    const response = await axios.get('https://www.fotmob.com/api/allLeagues', {
+    const response = await axios.get('https://www.fotmob.com/api/data/allLeagues', {
       params: {
         'locale': 'en',
         'country': 'INT'

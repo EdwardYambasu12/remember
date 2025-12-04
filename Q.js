@@ -26,7 +26,7 @@
            
 
 
-        const res = await axios.get('https://www.fotmob.com/api/matches', {
+        const res = await axios.get('https://www.fotmob.com/api/data/matches', {
       params: {
         'date': formatted_date,
         'timezone': userTimeZone,

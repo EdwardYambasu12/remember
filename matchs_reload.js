@@ -44,7 +44,7 @@ async function fetchMatches(date) {
 
   const data = await model_schema.find()
       
-   const res = await axios.get('https://www.fotmob.com/api/matches', {
+   const res = await axios.get('https://www.fotmob.com/api/data/matches', {
   params: {
     'date': date,
     'timezone': 'Africa/Monrovia',

@@ -15,7 +15,7 @@ matches.get("/man", async(req, res)=>{
     
     console.log("Using token:", token)
     
-    const response = await axios.get('https://www.fotmob.com/api/matches', {
+    const response = await axios.get('https://www.fotmob.com/api/data/matches', {
       params: {
         'date': '20241030',
         'timezone': 'Africa/Monrovia',
@@ -68,7 +68,7 @@ matches.get("/match", async(req, res)=>{
       ccode3: code
     });
 
-    const response = await axios.get('https://www.fotmob.com/api/matches', {
+    const response = await axios.get('https://www.fotmob.com/api/data/matches', {
       params: {
         'date': date,
         'timezone': timeZone,

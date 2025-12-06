@@ -67,6 +67,8 @@ router.post('/', async (req, res) => {
           const searchResults = await tvly.search(userMessage, {
             maxResults: 15,
             searchDepth: "advanced",
+            includeAnswer: "advanced",
+            searchDepth: "advanced",
             includeAnswer: true,
             includeRawContent: true,
             includeDomains: [

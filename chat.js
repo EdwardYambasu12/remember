@@ -1,12 +1,11 @@
 const express = require('express');
-const axios = require('axios');
-
+const OpenAI = require('openai');
+const { tavily } = require("@tavily/core");
 const router = express.Router();
 
-// Simple in-memory rate limiter per IP (small projects only)
-const rateMap = new Map(); // ip -> { count, firstTs }
-const WINDOW_MS = 60 * 1000; // 1 minute
-const MAX_REQUESTS = 30; // per minute per IP
+const rateMap = new Map(); 
+const WINDOW_MS = 60 * 1000; 
+const MAX_REQUESTS = 30;
 
 function checkRateLimit(ip) {
   const now = Date.now();
@@ -31,45 +30,125 @@ router.post('/', async (req, res) => {
 
     const { messages } = req.body;
     if (!messages || !Array.isArray(messages)) {
-      return res.status(400).json({ message: "Missing or invalid 'messages' array in request body." });
+      return res.status(400).json({ message: "Missing or invalid 'messages' array." });
+    }
+
+    const apiKey = process.env.DAILY_API_KEY;
+    const tavilyApiKey = process.env.TAVILY_API_KEY;
+    
+    if (!apiKey) {
+      return res.status(500).json({ message: 'OpenAI API key not configured.' });
+    }
+
+    const client = new OpenAI({ apiKey });
+    const tvly = tavilyApiKey ? tavily({ apiKey: tavilyApiKey }) : null;
+
+    const userMessage = messages[messages.length - 1]?.content;
+    let searchContext = "";
+
+    // Perform web search for football-related queries
+    if (userMessage && (
+      userMessage.toLowerCase().includes('match') ||
+      userMessage.toLowerCase().includes('score') ||
+      userMessage.toLowerCase().includes('latest') ||
+      userMessage.toLowerCase().includes('today') ||
+      userMessage.toLowerCase().includes('result') ||
+      userMessage.toLowerCase().includes('fixture') ||
+      userMessage.toLowerCase().includes('league') ||
+      userMessage.toLowerCase().includes('team') ||
+      userMessage.toLowerCase().includes('player') ||
+      userMessage.toLowerCase().includes('transfer') ||
+      userMessage.toLowerCase().includes('injury') ||
+      userMessage.toLowerCase().includes('standing') ||
+      userMessage.toLowerCase().includes('table')
+    )) {
+      if (tvly) {
+        try {
+          const searchResults = await tvly.search(userMessage, {
+            maxResults: 15,
+            searchDepth: "advanced",
+            includeAnswer: true,
+            includeRawContent: true,
+            includeDomains: [
+              "bbc.com/sport",
+              "skysports.com",
+              "goal.com",
+              "theguardian.com/football",
+              "reuters.com/sports",
+              "apnews.com/sports",
+              "livescore.com",
+              "flashscore.com",
+              "sofascore.com",
+              "whoscored.com",
+              "transfermarkt.com",
+              "premierleague.com",
+              "uefa.com",
+              "fifa.com",
+              "sports.yahoo.com",
+              "cbssports.com",
+              "marca.com",
+              "90min.com",
+              "theathletic.com",
+              "football365.com",
+              "talksport.com",
+              "sportingnews.com",
+              "onefootball.com",
+              "si.com/soccer",
+              "lonescore.com",
+              "fotmob.com"
+            ],
+            topic: "general"
+          });
+          
+          if (searchResults.answer) {
+            searchContext = `\n\nCurrent information from web search: ${searchResults.answer}`;
+          } else if (searchResults.results?.length > 0) {
+            const detailedInfo = searchResults.results
+              .map(r => `${r.content} (Source: ${r.url})`)
+              .join('\n\n');
+            searchContext = `\n\nCurrent information from web:\n${detailedInfo}`;
+          }
+        } catch (searchErr) {
+          console.error('Search error (Tavily may be unavailable):', searchErr);
+        }
+      }
     }
 
     const systemPrompt = {
       role: 'system',
       content:
         "You are LoneScore AI, a precise and knowledgeable football assistant. " +
-        "Provide direct, accurate, and concise answers about football matches, teams, players, leagues, statistics, fixtures, and results. " +
-        "Be straightforward and factual in your responses. If you don't have specific real-time data, acknowledge it and provide general football knowledge instead. " +
-        "Keep responses brief but informative. Use simple language and avoid unnecessary elaboration. " +
-        "Focus on delivering the exact information requested without extra context unless asked. " +
-        "If a question is unclear, ask for clarification in one short sentence."
+        (searchContext 
+          ? "You have access to real-time web search results from trusted sports sources. Use the provided search context to answer accurately. "
+          : "Note: Real-time search is currently unavailable. Provide general football knowledge and direct users to lonescore.com for the latest live updates. "
+        ) +
+        "Be direct, factual, and concise. " +
+        "If search results are provided, prioritize that information and verify facts across multiple sources. " +
+        "Format responses clearly and concisely. " +
+        "Do not mention any sports website or news website, only mention lonescore.com (LoneScore) when suggesting where to find more information." +
+        searchContext
     };
 
-    const payload = {
-      model: process.env.OPENAI_MODEL || 'gpt-4o-mini',
-      messages: [systemPrompt, ...messages],
-      max_tokens: 300,
+    const payloadMessages = [systemPrompt, ...messages];
+
+    const completion = await client.chat.completions.create({
+      model: process.env.OPENAI_MODEL || "gpt-4o-mini",
+      messages: payloadMessages,
+      max_tokens: 500,
       temperature: 0.3,
-    };
-
-    const apiKey = process.env.DAILY_API_KEY;
-    console.log('Using OpenAI API Key:', apiKey ? 'configured' : 'NOT configured');
-    if (!apiKey) return res.status(500).json({ message: 'OpenAI API key not configured on server.' });
-    
-    const response = await axios.post('https://api.openai.com/v1/chat/completions', payload, {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${apiKey}`,
-      },
-      timeout: 30 * 1000,
     });
 
-    const data = response.data;
-    const aiReply = data?.choices?.[0]?.message?.content || 'I couldn\'t process your input, please try again.';
-    return res.json({ message: aiReply, raw: process.env.NODE_ENV !== 'production' ? data : undefined });
+    const aiReply = completion.choices[0].message?.content || 
+      "I couldn't process your input, please try again.";
+
+    res.json({
+      message: aiReply,
+      raw: process.env.NODE_ENV !== 'production' ? completion : undefined,
+    });
+
   } catch (err) {
-    console.error('❌ /api/chat error:', err?.response?.data || err.message || err);
-    return res.status(500).json({ message: 'Server error processing chat request.' });
+    console.error("❌ /api/chat error:", err?.response?.data || err.message || err);
+    return res.status(500).json({ message: "Server error processing chat request." });
   }
 });
 

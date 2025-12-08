@@ -7,7 +7,7 @@ async function io_connect(server) {
   io = new Server(server, {
     cors: {
       origin: [
-        "http://localhost:3000",
+        "http://localhost:5050",
         "https://www.lonescore.com"
       ],
       credentials: true

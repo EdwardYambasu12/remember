@@ -193,8 +193,8 @@ async function processNews(newsItems) {
     for (const item of newsItems) {
         try {
             const title = item.lead
-                ? `${item.title}\n\n${item.lead}\n\n More news at www.lonescore.com`
-                : `${item.title}\n\n More news at www.lonescore.com`;
+                ? `${item.title}\n\n${item.lead}\n\n Read more at www.lonescore.com`
+                : `${item.title}\n\n Read more at www.lonescore.com`;
 
             // Clean image URL by removing query parameters
             const cleanImageUrl = item.imageUrl.split('?')[0];

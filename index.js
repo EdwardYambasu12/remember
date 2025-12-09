@@ -12,6 +12,7 @@ const co = require("./co.js")
 require("./matchs_reload.js")
 const server = http.createServer(app)
 const io = require("./socket.js")
+const { startMetaNewsBot } = require("./meta.js")
 
 io(server)
 
@@ -327,6 +328,7 @@ server.listen(PORT, async ()=>{
     console.log(`Wake-up detection enabled (auto-refresh on stale tokens)`);
     
     console.log(`${'='.repeat(60)}\n`);
+    startMetaNewsBot();
 })
 
 module.exports = server

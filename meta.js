@@ -154,10 +154,10 @@ async function publishToInstagram(caption, imageUrl) {
         );
         
         const creationId = createResponse.data.id;
-        console.log(`[Instagram] Media container created: ${creationId}. Waiting 10 seconds for processing...`);
+        console.log(`[Instagram] Media container created: ${creationId}. Waiting 15 seconds for processing...`);
 
         // Step 2: Wait for Instagram to process the image (Instagram needs time)
-        await new Promise(resolve => setTimeout(resolve, 10000));
+        await new Promise(resolve => setTimeout(resolve, 15000));
 
         // Step 3: Publish the media container
         const publishResponse = await axios.post(
@@ -202,8 +202,8 @@ async function processNews(newsItems) {
             // Post to Facebook
             await publishToFacebook(title, cleanImageUrl);
             
-            // Wait 3 seconds before posting to Instagram
-            await new Promise(resolve => setTimeout(resolve, 3000));
+            // Wait 5 seconds before posting to Instagram
+            await new Promise(resolve => setTimeout(resolve, 5000));
             
             // Post to Instagram
             await publishToInstagram(title, cleanImageUrl);
@@ -211,8 +211,8 @@ async function processNews(newsItems) {
             // Save to MongoDB after successful posting
             await savePostedNewsItem(item.id);
 
-            // Wait 5 seconds before processing next item
-            await new Promise(resolve => setTimeout(resolve, 5000));
+            // Wait 20 seconds before processing next item (increased from 5s to avoid rate limits)
+            await new Promise(resolve => setTimeout(resolve, 20000));
 
         } catch (error) {
             console.error(`[Meta News Bot] Error processing news item "${item.title}":`, error.message);

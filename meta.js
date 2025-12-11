@@ -9,7 +9,6 @@ const FACEBOOK_ACCESS_TOKEN = process.env.FACEBOOK_ACCESS_TOKEN;
 const INSTAGRAM_USER_ID = process.env.INSTAGRAM_USER_ID;
 const INSTAGRAM_ACCESS_TOKEN = process.env.INSTAGRAM_ACCESS_TOKEN;
 
-// MongoDB Schema for posted news
 const postedNewsSchema = new mongoose.Schema({
     newsId: { type: String, required: true, unique: true },
     postedAt: { type: Date, default: Date.now }
@@ -21,7 +20,6 @@ let previousnews = [];
 let fotmobToken = null;
 let isInitialized = false;
 
-// Clean up old posted news (older than 7 days)
 async function cleanupOldNews() {
     try {
         const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
@@ -34,10 +32,8 @@ async function cleanupOldNews() {
     }
 }
 
-// Load previously posted news IDs from MongoDB
 async function loadPostedNews() {
     try {
-        // First, clean up old news items
         await cleanupOldNews();
         
         const postedItems = await PostedNews.find();
@@ -50,18 +46,16 @@ async function loadPostedNews() {
     }
 }
 
-// Save posted news ID to MongoDB
 async function savePostedNewsItem(newsId) {
     try {
         await PostedNews.create({ newsId });
     } catch (error) {
-        if (error.code !== 11000) { // Ignore duplicate key errors
+        if (error.code !== 11000) {
             console.error('[Meta News Bot] Error saving posted news to MongoDB:', error.message);
         }
     }
 }
 
-// Initialize token
 async function initializeToken() {
     try {
         const startIndex = 0;
@@ -77,7 +71,6 @@ async function initializeToken() {
     }
 }
 
-// Fetch news from FotMob API
 async function news_fetch() {
     if (!isInitialized) {
         await initializeToken();
@@ -99,7 +92,6 @@ async function news_fetch() {
     return response.data;
 }
 
-// Compare latest news with old news to find new items
 async function news_change(latestNews, oldNews) {
     const difference = latestNews.filter(item1 => 
         !oldNews.some(item2 => item2.id === item1.id)
@@ -108,7 +100,6 @@ async function news_change(latestNews, oldNews) {
     return difference;
 }
 
-// Publish photo post to Facebook
 async function publishToFacebook(message, photoUrl) {
     try {
         const response = await axios.post(
@@ -135,14 +126,33 @@ async function publishToFacebook(message, photoUrl) {
     }
 }
 
-// Publish photo post to Instagram
+async function commentOnFacebook(postId, message) {
+    try {
+        const response = await axios.post(
+            `https://graph.facebook.com/v24.0/${postId}/comments`,
+            null,
+            {
+                params: {
+                    message: message,
+                    access_token: FACEBOOK_ACCESS_TOKEN
+                }
+            }
+        );
+
+        console.log(`[Facebook] ✓ Commented on post ${postId}`);
+        return response.data.id;
+    } catch (error) {
+        console.error('[Facebook] ✗ Comment Error:', error.response?.data?.error?.message || error.message);
+        return null;
+    }
+}
+
 async function publishToInstagram(caption, imageUrl) {
     try {
         console.log(`[Instagram] Creating media with URL: ${imageUrl.substring(0, 60)}...`);
         
-        // Step 1: Create media container
         const createResponse = await axios.post(
-            `https://graph.instagram.com/v21.0/${INSTAGRAM_USER_ID}/media`,
+            `https://graph.instagram.com/v24.0/${INSTAGRAM_USER_ID}/media`,
             null, 
             {
                 params: {
@@ -156,12 +166,10 @@ async function publishToInstagram(caption, imageUrl) {
         const creationId = createResponse.data.id;
         console.log(`[Instagram] Media container created: ${creationId}. Waiting 15 seconds for processing...`);
 
-        // Step 2: Wait for Instagram to process the image (Instagram needs time)
         await new Promise(resolve => setTimeout(resolve, 15000));
 
-        // Step 3: Publish the media container
         const publishResponse = await axios.post(
-            `https://graph.instagram.com/v21.0/${INSTAGRAM_USER_ID}/media_publish`,
+            `https://graph.instagram.com/v24.0/${INSTAGRAM_USER_ID}/media_publish`,
             null, 
             {
                 params: {
@@ -182,7 +190,27 @@ async function publishToInstagram(caption, imageUrl) {
     }
 }
 
-// Process news items and post to both Facebook and Instagram
+async function commentOnInstagram(mediaId, message) {
+    try {
+        const response = await axios.post(
+            `https://graph.instagram.com/v24.0/${mediaId}/comments`,
+            null,
+            {
+                params: {
+                    message: message,
+                    access_token: INSTAGRAM_ACCESS_TOKEN
+                }
+            }
+        );
+
+        console.log(`[Instagram] ✓ Commented on post ${mediaId}`);
+        return response.data.id;
+    } catch (error) {
+        console.error('[Instagram] ✗ Comment Error:', error.response?.data?.error?.message || error.message);
+        return null;
+    }
+}
+
 async function processNews(newsItems) {
     if (!newsItems || newsItems.length === 0) {
         return;
@@ -193,25 +221,34 @@ async function processNews(newsItems) {
     for (const item of newsItems) {
         try {
             const title = item.lead
-                ? `${item.title}\n\n${item.lead}\n\n Read more at www.lonescore.com`
-                : `${item.title}\n\n Read more at www.lonescore.com`;
+                ? `${item.title}\n\n${item.lead}\n\n Check comments for full story`
+                : `${item.title}\n\n Check comments for full story`;
 
-            // Clean image URL by removing query parameters
             const cleanImageUrl = item.imageUrl.split('?')[0];
+            const linkComment = `Read the full story at www.lonescore.com`;
 
             // Post to Facebook
-            await publishToFacebook(title, cleanImageUrl);
+            const facebookPostId = await publishToFacebook(title, cleanImageUrl);
             
-            // Wait 5 seconds before posting to Instagram
+            // Comment on Facebook post with link
+            if (facebookPostId) {
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                await commentOnFacebook(facebookPostId, linkComment);
+            }
+            
             await new Promise(resolve => setTimeout(resolve, 5000));
             
             // Post to Instagram
-            await publishToInstagram(title, cleanImageUrl);
+            const instagramPostId = await publishToInstagram(title, cleanImageUrl);
+            
+            // Comment on Instagram post with link
+            if (instagramPostId) {
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                await commentOnInstagram(instagramPostId, linkComment);
+            }
 
-            // Save to MongoDB after successful posting
             await savePostedNewsItem(item.id);
 
-            // Wait 20 seconds before processing next item (increased from 5s to avoid rate limits)
             await new Promise(resolve => setTimeout(resolve, 20000));
 
         } catch (error) {
@@ -220,7 +257,6 @@ async function processNews(newsItems) {
     }
 }
 
-// Main function to fetch and process news
 async function fetchAndPostNews() {
     try {
         console.log('[Meta News Bot] Fetching latest news...');
@@ -239,12 +275,10 @@ async function fetchAndPostNews() {
     } catch (error) {
         console.error('[Meta News Bot] Error fetching/posting news:', error.message);
     } finally {
-        // Fetch again after 1 minute (60000ms)
         setTimeout(fetchAndPostNews, 60000);
     }
 }
 
-// Start the news fetching and posting process
 async function startMetaNewsBot() {
     console.log('\n' + '='.repeat(60));
     console.log('Meta News Bot Started');
@@ -255,10 +289,8 @@ async function startMetaNewsBot() {
     console.log('Storage: MongoDB');
     console.log('='.repeat(60) + '\n');
 
-    // Load previously posted news from MongoDB to avoid duplicates after restart
     const postedIds = await loadPostedNews();
     if (postedIds.length > 0) {
-        // Reconstruct previousnews with just IDs to avoid duplicates
         previousnews = postedIds.map(id => ({ id }));
     }
 

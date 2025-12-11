@@ -225,12 +225,10 @@ async function processNews(newsItems) {
                 : `${item.title}\n\n Check comments for full story`;
 
             const cleanImageUrl = item.imageUrl.split('?')[0];
-            const linkComment = `Read the full story at www.lonescore.com`;
+            const linkComment = `Read the full story at https://www.lonescore.com`;
 
-            // Post to Facebook
             const facebookPostId = await publishToFacebook(title, cleanImageUrl);
             
-            // Comment on Facebook post with link
             if (facebookPostId) {
                 await new Promise(resolve => setTimeout(resolve, 2000));
                 await commentOnFacebook(facebookPostId, linkComment);
@@ -238,10 +236,8 @@ async function processNews(newsItems) {
             
             await new Promise(resolve => setTimeout(resolve, 5000));
             
-            // Post to Instagram
             const instagramPostId = await publishToInstagram(title, cleanImageUrl);
             
-            // Comment on Instagram post with link
             if (instagramPostId) {
                 await new Promise(resolve => setTimeout(resolve, 2000));
                 await commentOnInstagram(instagramPostId, linkComment);

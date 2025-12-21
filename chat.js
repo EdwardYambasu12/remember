@@ -140,8 +140,10 @@ router.post('/', async (req, res) => {
       temperature: 0.3,
     });
 
-    const aiReply = completion.choices[0].message?.content || 
-      "I couldn't process your input, please try again.";
+
+    let aiReply = completion.choices[0].message?.content || "I couldn't process your input, please try again.";
+    // Remove unwanted characters: *, #, -, ~ and similar
+    aiReply = aiReply.replace(/[\*#\-~]+/g, '').replace(/\s{2,}/g, ' ').trim();
 
     res.json({
       message: aiReply,

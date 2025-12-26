@@ -88,6 +88,7 @@ news.get("/top", async(req, res)=>{
   }
 })
 
+
 // Endpoint to fetch a single news article by ID from FotMob
 news.get("/news_article", async (req, res) => {
   try {
@@ -112,6 +113,33 @@ news.get("/news_article", async (req, res) => {
   } catch (e) {
     console.error('Single news article error:', e);
     res.status(500).json({ error: 'Failed to fetch news article' });
+  }
+});
+
+// Endpoint to fetch a topnews article by ID from FotMob
+news.get("/topnews_article", async (req, res) => {
+  try {
+    const id = req.query.id;
+    if (!id) {
+      return res.status(400).json({ error: 'Missing topnews article id' });
+    }
+
+    const urlPath = `/api/news/topnews?id=${id}`;
+    const token = await getOrGenerateToken('news', { urlPath });
+
+    const response = await axios.get('https://www.fotmob.com/api/news/topnews', {
+      params: { id },
+      headers: {
+        'accept': '*/*',
+        'user-agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15',
+        'x-mas': token
+      }
+    });
+
+    res.json(response.data);
+  } catch (e) {
+    console.error('Topnews article error:', e);
+    res.status(500).json({ error: 'Failed to fetch topnews article' });
   }
 });
 

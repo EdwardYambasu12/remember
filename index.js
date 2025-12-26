@@ -33,12 +33,7 @@ const path = require("path")
 app.use(express.static(path.join(__dirname, "public")))
 
 app.get('/', (req, res) => {
-  res.json({
-    status: 'success',
-    message: 'LoneScore API Server - Running with X-mas Token Middleware',
-    version: '1.0.0',
-    timestamp: new Date().toISOString()
-  });
+  res.redirect('https://lonescore.com');
 });
 
 app.get('/api/status', (req, res) => {
@@ -307,12 +302,7 @@ app.use(async (req, res, next) => {
 });
 
 app.use((req, res) => {
-  res.status(404).json({
-    status: 'error',
-    message: 'Endpoint not found',
-    path: req.path,
-    method: req.method,
-  });
+  res.redirect('https://lonescore.com');
 });
 
 server.listen(PORT, async ()=>{

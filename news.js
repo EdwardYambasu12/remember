@@ -88,4 +88,31 @@ news.get("/top", async(req, res)=>{
   }
 })
 
+// Endpoint to fetch a single news article by ID from FotMob
+news.get("/news_article", async (req, res) => {
+  try {
+    const id = req.query.id;
+    if (!id) {
+      return res.status(400).json({ error: 'Missing news article id' });
+    }
+
+    const urlPath = `/api/news/news?id=${id}`;
+    const token = await getOrGenerateToken('news', { urlPath });
+
+    const response = await axios.get('https://www.fotmob.com/api/news/news', {
+      params: { id },
+      headers: {
+        'accept': '*/*',
+        'user-agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15',
+        'x-mas': token
+      }
+    });
+
+    res.json(response.data);
+  } catch (e) {
+    console.error('Single news article error:', e);
+    res.status(500).json({ error: 'Failed to fetch news article' });
+  }
+});
+
 module.exports = news

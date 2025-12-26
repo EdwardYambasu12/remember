@@ -6,6 +6,7 @@ const news = require("./news.js")
 const search = require("./search.js")
 const news_post = require("./post-news.js")
 const app = express()
+const favicon = require('serve-favicon')
 const axios = require("axios")
 const http = require("http")
 const co = require("./co.js")
@@ -30,6 +31,7 @@ app.use(bodyParser.urlencoded({ limit: '150mb', extended: true }));
 app.use(express.urlencoded({extended : true}));
 
 const path = require("path")
+app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')))
 app.use(express.static(path.join(__dirname, "public")))
 
 app.get('/', (req, res) => {

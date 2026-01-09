@@ -64,6 +64,7 @@ const team = require("./team.js")
 const player = require("./player.js")
 const {router, model_schema, generateMatchesToken, generateMatchDetailsToken} = require("./auth.js")
 const chat = require("./chat.js")
+const adAnalytics = require("./ad-analytics.js")
 
 app.use(co)
 app.use(news_post)
@@ -76,6 +77,7 @@ app.use(result)
 app.use(team)
 app.use(player)
 app.use("/api/chat", chat)
+app.use("/ad-analytics", adAnalytics)
 
 const https = require('https');
 

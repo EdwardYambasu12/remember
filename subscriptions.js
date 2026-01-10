@@ -395,6 +395,236 @@ router.get('/stats', async (req, res) => {
   }
 });
 
+// POST /subscriptions/restore - Restore purchase by email
+router.post('/restore', async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({
+        success: false,
+        error: 'Email is required',
+      });
+    }
+
+    // Find subscription by email
+    const subscription = await Subscription.findOne({ 
+      email: email.toLowerCase().trim(),
+      status: { $in: ['active', 'trial', 'on_hold'] }
+    }).lean();
+
+    if (!subscription) {
+      return res.status(404).json({
+        success: false,
+        error: 'No active subscription found for this email',
+      });
+    }
+
+    // Check if subscription has expired
+    if (subscription.currentPeriodEnd && subscription.currentPeriodEnd < Date.now()) {
+      return res.status(404).json({
+        success: false,
+        error: 'Your subscription has expired. Please renew to continue.',
+      });
+    }
+
+    console.log(`[Subscriptions] Purchase restored for email ${email}: ${subscription.dodoSubscriptionId}`);
+
+    res.status(200).json({
+      success: true,
+      subscription: {
+        user_id: subscription.userId,
+        subscription_id: subscription.dodoSubscriptionId,
+        status: subscription.status,
+        plan_id: subscription.planId,
+        current_period_start: subscription.currentPeriodStart,
+        current_period_end: subscription.currentPeriodEnd,
+        trial_end: subscription.trialEnd,
+        cancel_at_period_end: subscription.cancelAtPeriodEnd,
+      },
+    });
+  } catch (error) {
+    console.error('[Subscriptions] Error restoring purchase:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to restore purchase',
+    });
+  }
+});
+
+// ==================== ADMIN ENDPOINTS ====================
+
+// GET /subscriptions/admin/users - List all subscribers (protected)
+router.get('/admin/users', async (req, res) => {
+  try {
+    const adminKey = req.headers['x-admin-key'];
+    if (adminKey !== process.env.ADMIN_SECRET_KEY) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    const { status, page = 1, limit = 50 } = req.query;
+    
+    const query = {};
+    if (status) {
+      query.status = status;
+    }
+
+    const subscriptions = await Subscription.find(query)
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * limit)
+      .limit(parseInt(limit))
+      .select('userId email name planId status currentPeriodEnd trialEnd createdAt')
+      .lean();
+
+    const total = await Subscription.countDocuments(query);
+
+    res.json({
+      success: true,
+      data: subscriptions,
+      pagination: {
+        page: parseInt(page),
+        limit: parseInt(limit),
+        total,
+        pages: Math.ceil(total / limit),
+      },
+    });
+  } catch (error) {
+    console.error('[Subscriptions] Error fetching users:', error);
+    res.status(500).json({ error: 'Failed to fetch users' });
+  }
+});
+
+// GET /subscriptions/admin/user/:identifier - Get specific user details
+router.get('/admin/user/:identifier', async (req, res) => {
+  try {
+    const adminKey = req.headers['x-admin-key'];
+    if (adminKey !== process.env.ADMIN_SECRET_KEY) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    const { identifier } = req.params;
+    
+    // Search by userId, email, or subscriptionId
+    const subscription = await Subscription.findOne({
+      $or: [
+        { userId: identifier },
+        { email: identifier.toLowerCase() },
+        { dodoSubscriptionId: identifier },
+      ],
+    }).lean();
+
+    if (!subscription) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    res.json({
+      success: true,
+      user: subscription,
+    });
+  } catch (error) {
+    console.error('[Subscriptions] Error fetching user:', error);
+    res.status(500).json({ error: 'Failed to fetch user' });
+  }
+});
+
+// POST /subscriptions/admin/verify - Manually verify/update a user
+router.post('/admin/verify', async (req, res) => {
+  try {
+    const adminKey = req.headers['x-admin-key'];
+    if (adminKey !== process.env.ADMIN_SECRET_KEY) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    const { userId, email, action, planId, durationDays } = req.body;
+
+    const query = userId ? { userId } : { email: email.toLowerCase() };
+    
+    if (action === 'grant') {
+      // Manually grant premium access
+      const expiresAt = Date.now() + (durationDays || 30) * 24 * 60 * 60 * 1000;
+      
+      await Subscription.findOneAndUpdate(
+        query,
+        {
+          ...query,
+          planId: planId || 'monthly',
+          status: 'active',
+          currentPeriodStart: Date.now(),
+          currentPeriodEnd: expiresAt,
+          updatedAt: new Date(),
+        },
+        { upsert: true, new: true }
+      );
+
+      return res.json({ success: true, message: 'Premium access granted' });
+    }
+
+    if (action === 'revoke') {
+      await Subscription.updateOne(query, {
+        status: 'cancelled',
+        updatedAt: new Date(),
+      });
+
+      return res.json({ success: true, message: 'Premium access revoked' });
+    }
+
+    res.status(400).json({ error: 'Invalid action. Use "grant" or "revoke"' });
+  } catch (error) {
+    console.error('[Subscriptions] Error verifying user:', error);
+    res.status(500).json({ error: 'Failed to verify user' });
+  }
+});
+
+// ...existing code...
+
+// POST /subscriptions/restore - Restore purchase by email
+router.post('/restore', async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({
+        success: false,
+        error: 'Email is required',
+      });
+    }
+
+    // Find subscription by email
+    const subscription = await Subscription.findOne({
+      email: email.toLowerCase().trim(),
+      status: { $in: ['active', 'trial', 'on_hold'] },
+    }).lean();
+
+    if (!subscription) {
+      return res.status(404).json({
+        success: false,
+        error: 'No active subscription found for this email',
+      });
+    }
+
+    console.log(`[Restore] Found subscription for ${email}: ${subscription._id}`);
+
+    res.json({
+      success: true,
+      subscription: {
+        id: subscription._id,
+        status: subscription.status,
+        productId: subscription.dodoProductId,
+        currentPeriodEnd: subscription.currentPeriodEnd,
+        verified: true,
+      },
+    });
+  } catch (error) {
+    console.error('[Restore] Error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to restore purchase',
+    });
+  }
+});
+
+// ...existing code...
+
 // ==================== WEBHOOK HANDLERS ====================
 
 // Verify webhook signature

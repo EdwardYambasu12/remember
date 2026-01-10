@@ -142,8 +142,9 @@ mongoose.connect(uri)
   .catch(err => console.error('MongoDB: error{Not Connected}', err));
 
 const registerSchema = new mongoose.Schema({
-  email: { type: String,  },
-  password: { type: String, },
+  email: { type: String },
+  password: { type: String },
+  name: { type: String },
   favorite_team: [{ type: String }],
   favorite_player: [{ type: String }],
   favorite_league: [{ type: String }],
@@ -718,6 +719,62 @@ router.post("/unpinned_matches", async (req, res) => {
     // Log the error and send an error response to the client
     console.error('Error removing favorite Player:', err);
     res.status(500).json({ message: 'Error removing favorite Player', error: err.message });
+  }
+});
+
+// POST /auth/update-profile - Update user profile (email, name)
+router.post('/update-profile', async (req, res) => {
+  try {
+    const { userId, email, name } = req.body;
+
+    if (!userId) {
+      return res.status(400).json({
+        success: false,
+        error: 'userId is required',
+      });
+    }
+
+    const updateData = {};
+    if (email) {
+      updateData.email = email.toLowerCase().trim();
+    }
+    if (name) {
+      updateData.name = name.trim();
+    }
+
+    if (Object.keys(updateData).length === 0) {
+      return res.status(400).json({
+        success: false,
+        error: 'No fields to update',
+      });
+    }
+
+    // Update user in your users collection
+    const result = await register_model.findByIdAndUpdate(
+      userId,
+      { $set: updateData },
+      { new: true }
+    );
+
+    if (!result) {
+      return res.status(404).json({
+        success: false,
+        error: 'User not found',
+      });
+    }
+
+    console.log(`[Auth] Profile updated for user ${userId}: ${JSON.stringify(updateData)}`);
+
+    res.json({
+      success: true,
+      message: 'Profile updated successfully',
+    });
+  } catch (error) {
+    console.error('[Auth] Error updating profile:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to update profile',
+    });
   }
 });
 

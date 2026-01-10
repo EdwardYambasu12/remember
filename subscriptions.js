@@ -60,8 +60,8 @@ const Subscription = mongoose.model('Subscription', subscriptionSchema);
 
 // Product ID mapping
 const PRODUCT_IDS = {
-  monthly: process.env.DODO_PRODUCT_MONTHLY || 'pdt_0NVzZgRpteyLnUvX9jyG3',
-  yearly: process.env.DODO_PRODUCT_YEARLY || 'pdt_9Mh5OByQKdR6ZkGCWh5Hb',
+  monthly: process.env.DODO_PRODUCT_MONTHLY,
+  yearly: process.env.DODO_PRODUCT_YEARLY,
 };
 
 const PLAN_FROM_PRODUCT = Object.fromEntries(

@@ -4,6 +4,9 @@ const mongoose = require('mongoose');
 const crypto = require('crypto');
 const DodoPayments = require('dodopayments');
 const router = express.Router();
+const bodyParser = require('body-parser');
+const dotenv = require('dotenv');
+dotenv.config();
 
 // Webhook signing secret
 const WEBHOOK_SECRET = process.env.DODO_WEBHOOK_SECRET || 'whsec_38vgvLI0zpBzd5ztTo8B25ScgAO4LGXh';
@@ -52,7 +55,6 @@ const subscriptionSchema = new mongoose.Schema({
 });
 
 subscriptionSchema.index({ userId: 1, status: 1 });
-subscriptionSchema.index({ dodoSubscriptionId: 1 });
 
 const Subscription = mongoose.model('Subscription', subscriptionSchema);
 

@@ -20,6 +20,11 @@ async function fetchData() {
         const formattedDate = getFormattedDate();
         const newData = await fetchMatches(formattedDate);
 
+        // Skip if no data (tokens not ready yet)
+        if (!newData) {
+            return;
+        }
+
         // Log changes only when they happen
         if (changes_list.length > 0) {
             console.log(`📊 [Match Updates] ${changes_list.length} changes detected`);
@@ -28,7 +33,7 @@ async function fetchData() {
         holder = newData;
         previousData = newData;
     } catch (error) {
-        console.error('❌ Error fetching match data:', error);
+        console.error('❌ Error fetching match data:', error.message || error);
     } finally {
         setTimeout(fetchData, 5000);  // Fetch data again after 5 seconds
     }
@@ -42,7 +47,13 @@ function getFormattedDate() {
 
 async function fetchMatches(date) {
 
-  const data = await model_schema.find()
+  const data = await model_schema.find();
+  
+  // Check if token data exists
+  if (!data || data.length === 0 || !data[0]?.variable) {
+    console.log('⏳ [Match Reload] Waiting for tokens to be generated...');
+    return null;
+  }
       
    const res = await axios.get('https://www.fotmob.com/api/data/matches', {
   params: {

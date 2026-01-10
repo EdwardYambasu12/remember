@@ -1,4 +1,5 @@
-
+const dotenv = require("dotenv");
+dotenv.config();
 const express = require("express");
 const mongoose = require("mongoose");
 const router = express.Router();
@@ -135,7 +136,7 @@ function generateMatchDetailsToken(matchId) {
   return generateXmasToken(urlPath);
 }
 
-const uri = "mongodb+srv://sportsup14:a4gM6dGvo7SHk9aX@cluster0.db0ee.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+const uri = process.env.MONGODB_URI;
 mongoose.connect(uri)
   .then(() => console.log('MongoDB: Connected'))
   .catch(err => console.error('MongoDB: error{Not Connected}', err));

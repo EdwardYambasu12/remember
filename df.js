@@ -3,12 +3,14 @@ const mongoose = require("mongoose");
 const router = express.Router();
 const cors = require("cors");
 const bodyParser = require('body-parser');
+const dotenv = require('dotenv');
+dotenv.config();
 
 router.use(cors());
 router.use(bodyParser.json());
 router.use(express.urlencoded({ extended: true }));
 
-const uri = "mongodb://localhost:27017/";
+const uri = process.env.MONGODB_URI ;
 mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log('Connected to MongoDB'))
   .catch(err => console.error('Failed to connect to MongoDB', err));

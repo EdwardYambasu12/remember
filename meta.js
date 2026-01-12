@@ -226,12 +226,15 @@ async function processNews(newsItems) {
 
             const cleanImageUrl = item.imageUrl.split('?')[0];
             const linkComment = `Read the full story at https://www.lonescore.com`;
+            const secondComment = `Play Big - Win Bigger\nJoin us at NiceBet using this link:\nhttps://lonescore.com/nicebet`;
 
             const facebookPostId = await publishToFacebook(title, cleanImageUrl);
             
             if (facebookPostId) {
                 await new Promise(resolve => setTimeout(resolve, 2000));
                 await commentOnFacebook(facebookPostId, linkComment);
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                await commentOnFacebook(facebookPostId, secondComment);
             }
             
             await new Promise(resolve => setTimeout(resolve, 5000));
@@ -241,6 +244,8 @@ async function processNews(newsItems) {
             if (instagramPostId) {
                 await new Promise(resolve => setTimeout(resolve, 2000));
                 await commentOnInstagram(instagramPostId, linkComment);
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                await commentOnInstagram(instagramPostId, secondComment);
             }
 
             await savePostedNewsItem(item.id);

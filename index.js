@@ -80,9 +80,14 @@ app.use(search)
 app.use(result)
 app.use(team)
 app.use(player)
+
 app.use("/api/chat", chat)
 app.use("/ad-analytics", adAnalytics)
 app.use("/subscriptions", subscriptions)
+
+// Match status endpoint
+const matchStatusRouter = require("./matchStatus.js");
+app.use("/api", matchStatusRouter);
 
 const https = require('https');
 

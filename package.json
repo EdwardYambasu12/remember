@@ -13,6 +13,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@everapi/screenshotbase-js": "^0.1.1",
     "@tavily/core": "^0.5.14",
     "axios": "^1.7.2",
     "cheerio": "^1.0.0",

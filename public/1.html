@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Match Header</title>
+    <link rel="stylesheet" href="1.css">
+</head>
+<body>
+    <div id="matchHeader" class="match-header"></div>
+
+    <script src="1.js"></script>
+    <script>
+        // Example usage with sample data
+        // Fetch match data from API and initialize MatchHeader
+        async function fetchAndInitMatchHeader(matchId) {
+            try {
+                const response = await fetch(`https://api.lonescore.com/result?id[id]=${matchId}`);
+                if (!response.ok) throw new Error('Network response was not ok');
+                const data = await response.json();
+                const match = mapApiToMatchHeader(data);
+                new MatchHeader('matchHeader', {
+                    match,
+                    theme: 'light', // Always use light mode
+                    onLike: () => console.log('Match liked!'),
+                    onBack: () => console.log('Back clicked'),
+                    onTeamClick: (teamId) => console.log('Team clicked:', teamId),
+                    onLeagueClick: (leagueId) => console.log('League clicked:', leagueId)
+                });
+            } catch (e) {
+                document.getElementById('matchHeader').innerHTML = '<div style="color:red;padding:1rem">Failed to load match data.</div>';
+                console.error(e);
+            }
+        }
+
+        // Map API response to MatchHeader format
+        function mapApiToMatchHeader(api) {
+            const g = api.general || {};
+            const h = api.header || {};
+            const home = h.teams && h.teams[0] ? h.teams[0] : {};
+            const away = h.teams && h.teams[1] ? h.teams[1] : {};
+            const teamColors = {
+                darkMode: {
+                    home: g.teamColors?.darkMode?.home,
+                    away: g.teamColors?.darkMode?.away
+                },
+                lightMode: {
+                    home: g.teamColors?.lightMode?.home,
+                    away: g.teamColors?.lightMode?.away
+                }
+            };
+            const fontDarkMode = {
+                home: g.teamColors?.fontDarkMode?.home,
+                away: g.teamColors?.fontDarkMode?.away
+            };
+            const fontLightMode = {
+                home: g.teamColors?.fontLightMode?.home,
+                away: g.teamColors?.fontLightMode?.away
+            };
+            return {
+                homeTeam: {
+                    id: home.id,
+                    name: home.name,
+                    logo: home.imageUrl || `https://images.fotmob.com/image_resources/logo/teamlogo/${home.id}.png`,
+                    score: home.score
+                },
+                awayTeam: {
+                    id: away.id,
+                    name: away.name,
+                    logo: away.imageUrl || `https://images.fotmob.com/image_resources/logo/teamlogo/${away.id}.png`,
+                    score: away.score
+                },
+                league: g.leagueName,
+                header: {
+                    status: {
+                        started: g.started || h.status?.started,
+                        finished: g.finished || h.status?.finished,
+                        numberOfHomeRedCards: h.status?.numberOfHomeRedCards || 0,
+                        numberOfAwayRedCards: h.status?.numberOfAwayRedCards || 0,
+                        startDateStr: g.matchTimeUTCDate || h.status?.utcTime,
+                        utcTime: h.status?.utcTime,
+                        reason: h.status?.reason,
+                        aggregatedStr: h.status?.aggregatedStr
+                    }
+                },
+                general: {
+                    parentLeagueId: g.parentLeagueId || g.leagueId,
+                    matchRound: g.matchRound || g.leagueRoundName,
+                    teamColors,
+                    fontDarkMode,
+                    fontLightMode
+                }
+            };
+        }
+
+        // Get matchId from query string (e.g., ?matchId=4813600)
+        function getMatchIdFromQuery() {
+            const params = new URLSearchParams(window.location.search);
+            return params.get('matchId');
+        }
+
+        const matchId = getMatchIdFromQuery();
+        if (matchId) {
+            fetchAndInitMatchHeader(matchId);
+        } else {
+            document.getElementById('matchHeader').innerHTML = '<div style="color:red;padding:1rem">No matchId found in URL.</div>';
+        }
+    </script>
+</body>
+</html>

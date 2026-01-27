@@ -1,0 +1,233 @@
+/* Match Header Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background-color: #1a1a1a;
+}
+
+.match-header {
+    margin-bottom: 0.75rem;
+}
+
+/* Theme backgrounds */
+.match-header.light {
+    background: linear-gradient(to bottom right, #ffffff, #f9fafb, #f3f4f6);
+}
+
+/* Main Score Section */
+.score-section {
+    padding: 1rem;
+}
+
+.teams-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.team {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    flex: 1;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.team:hover {
+    opacity: 0.8;
+}
+
+.team-logo-container {
+    position: relative;
+    width: 4rem;
+    height: 4rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.team-logo {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.red-cards {
+    position: absolute;
+    top: -0.5rem;
+    display: flex;
+    gap: 0.125rem;
+}
+
+.red-cards.home {
+    left: -0.5rem;
+}
+
+.red-cards.away {
+    right: -0.5rem;
+}
+
+.red-card {
+    width: 0.75rem;
+    height: 0.75rem;
+    object-fit: contain;
+}
+
+.team-name {
+    text-align: center;
+    font-weight: 700;
+    font-size: 0.75rem;
+}
+
+/* Center Score Area */
+.score-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.match-time-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.match-time {
+    font-size: 2.25rem;
+    font-weight: 700;
+}
+
+.countdown {
+    font-size: 0.75rem;
+    font-weight: 600;
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+.score-display {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.score {
+    font-size: 2.25rem;
+    font-weight: 900;
+}
+
+.score-divider {
+    font-size: 2.25rem;
+    font-weight: 700;
+    opacity: 0.6;
+}
+
+.aggregate-info,
+.penalty-info {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    border: 1px solid;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+/* League Info */
+.league-info {
+    padding: 0.75rem 0.75rem;
+    border-top: 1px solid rgba(128, 128, 128, 0.2);
+    transition: background-color 0.2s;
+}
+
+.league-info.clickable {
+    cursor: pointer;
+}
+
+.league-info.clickable:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.league-info {
+    background-color: rgba(255, 255, 255, 0.8);
+    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(4px);
+}
+
+.league-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-size: 1rem;
+    flex-direction: row;
+    white-space: nowrap;
+}
+
+.league-logo {
+    width: 1rem;
+    height: 1rem;
+    object-fit: contain;
+}
+
+.league-name {
+    font-size: 1rem;
+}
+
+.league-name {
+    color: #060606;
+}
+
+/* Responsive */
+@media (min-width: 640px) {
+    .team-logo-container {
+        width: 5rem;
+        height: 5rem;
+    }
+
+    .team-name {
+        font-size: 1rem;
+    }
+
+    .match-time {
+        font-size: 2.5rem;
+    }
+
+    .countdown {
+        font-size: 0.875rem;
+    }
+
+    .score {
+        font-size: 2.5rem;
+    }
+
+    .score-divider {
+        font-size: 1.875rem;
+    }
+
+    .red-card {
+        width: 1rem;
+        height: 1rem;
+    }
+
+    .aggregate-info,
+    .penalty-info {
+        font-size: 0.875rem;
+    }
+}

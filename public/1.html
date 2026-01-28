@@ -19,11 +19,9 @@
                 if (!response.ok) throw new Error('Network response was not ok');
                 const data = await response.json();
                 const match = mapApiToMatchHeader(data);
-                // Dynamically update Open Graph meta tags for Facebook preview
-                updateOpenGraphTags(match, matchId);
                 new MatchHeader('matchHeader', {
                     match,
-                    theme: 'light',
+                    theme: 'light', // Always use light mode
                     onLike: () => console.log('Match liked!'),
                     onBack: () => console.log('Back clicked'),
                     onTeamClick: (teamId) => console.log('Team clicked:', teamId),
@@ -31,47 +29,7 @@
                 });
             } catch (e) {
                 document.getElementById('matchHeader').innerHTML = '<div style="color:red;padding:1rem">Failed to load match data.</div>';
-                // Set fallback Open Graph tags on error
-                updateOpenGraphTags(null, matchId);
                 console.error(e);
-                    // Dynamically update Open Graph meta tags for Facebook preview
-                    function updateOpenGraphTags(match, matchId) {
-                        // Helper to set or update a meta tag
-                        function setMeta(property, content) {
-                            let tag = document.querySelector(`meta[property='${property}']`);
-                            if (!tag) {
-                                tag = document.createElement('meta');
-                                tag.setAttribute('property', property);
-                                document.head.appendChild(tag);
-                            }
-                            tag.setAttribute('content', content);
-                        }
-
-                        if (!match) {
-                            setMeta('og:title', 'Match Preview');
-                            setMeta('og:description', 'Match details could not be loaded.');
-                            setMeta('og:image', '');
-                            setMeta('og:url', window.location.href);
-                            return;
-                        }
-
-                        const home = match.homeTeam;
-                        const away = match.awayTeam;
-                        const league = match.league || '';
-                        const score = (home.score !== undefined && away.score !== undefined)
-                            ? ` ${home.score} - ${away.score}`
-                            : '';
-                        const title = `${home.name || ''} vs ${away.name || ''}${score ? ' | ' + score : ''}`;
-                        const description = `Watch the match between ${home.name || ''} and ${away.name || ''} in ${league}.`;
-                        // Prefer home team logo, fallback to league logo or a default
-                        const image = home.logo || away.logo || 'https://images.fotmob.com/image_resources/logo/leaguelogo/default.png';
-                        const url = `${window.location.origin}${window.location.pathname}?matchId=${matchId}`;
-
-                        setMeta('og:title', title);
-                        setMeta('og:description', description);
-                        setMeta('og:image', image);
-                        setMeta('og:url', url);
-                    }
             }
         }
 

@@ -26,9 +26,6 @@ app.use(cors({
 
 app.options('*', cors());
 
-// Raw body parser for webhook signature verification - MUST be before express.json()
-app.use('/subscriptions/webhook', express.raw({ type: 'application/json' }));
-
 app.use(bodyParser.json({ limit: '150mb' }));
 app.use(bodyParser.urlencoded({ limit: '150mb', extended: true }));
 app.use(express.urlencoded({extended : true}));
@@ -68,7 +65,6 @@ const player = require("./player.js")
 const {router, model_schema, generateMatchesToken, generateMatchDetailsToken} = require("./auth.js")
 const chat = require("./chat.js")
 const adAnalytics = require("./ad-analytics.js")
-const subscriptions = require("./subscriptions.js")
 
 app.use(co)
 app.use(news_post)
@@ -83,7 +79,6 @@ app.use(player)
 
 app.use("/api/chat", chat)
 app.use("/ad-analytics", adAnalytics)
-app.use("/subscriptions", subscriptions)
 
 // Match status endpoint
 const matchStatusRouter = require("./matchStatus.js");

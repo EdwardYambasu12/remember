@@ -26,23 +26,15 @@ async function getOrGenerateToken(type, params = {}) {
         );
         
       case 'matchDetails':
-        if (data?.result_string) return data.result_string;
         return generateMatchDetailsToken(params.matchId || '4822533');
-        
+
       case 'commentary':
-        // Commentary tokens should always be fresh due to URL uniqueness
-        if (params.urlPath) {
-          return generateXmasToken(params.urlPath);
-        }
-        if (data?.comm) return data.comm;
         return generateXmasToken(params.urlPath || '/api/data/ltc');
-        
+
       case 'news':
-        if (data?.m_news) return data.m_news;
         return generateXmasToken(params.urlPath);
-        
+
       case 'odds':
-        if (data?.odds) return data.odds;
         return generateXmasToken(params.urlPath);
         
       default:
